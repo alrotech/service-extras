@@ -1,0 +1,7 @@
+{
+    "require": {
+        "slim/slim": "^3.4",
+        "monolog/monolog": "^1.19",
+        "sabre/xml": "^1.4"
+    }
+}
