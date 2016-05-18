@@ -1,0 +1,10 @@
+{
+  "name" : "aestore.by",
+  "desc" : "desc",
+  "rest" : "base rest link ",
+
+  "packages" : [
+    {"vcs" : "link to repo https bla-bla-bla 1"},
+    {"vcs" : "link to repo https bla-bla-bla 2"}
+  ]
+}
