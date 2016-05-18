@@ -1,23 +1,26 @@
 <?php
 
+use alroniks\repository\controllers\Home;
+use alroniks\repository\controllers\Package;
+use alroniks\repository\controllers\Repository;
+use alroniks\repository\Renderer;
+
 $container = $app->getContainer();
 
-// CSRF guard
-$container['csrf'] = function ($c) {
-    $guard = new \Slim\Csrf\Guard();
-    $guard->setFailureCallable(function ($request, $response, $next) {
-        $request = $request->withAttribute("csrf_status", false);
-        return $next($request, $response);
-    });
-    return $guard;
+// Output renderer
+$container['renderer'] = function ($c) {
+    return new Renderer($c['request']);
 };
 
-// Flash messages
-$container['flash'] = function ($c) {
-    return new \Slim\Flash\Messages;
+// Controllers
+$container['HomeController'] = function ($c) {
+    return new Home($c['renderer']);
 };
 
-// XML Writer
-$container['xml'] = function ($c) {
-    return new Sabre\Xml\Service();
+$container['RepositoryController'] = function ($c) {
+    return new Repository($c['renderer']);
+};
+
+$container['PackageController'] = function ($c) {
+    return new Package($c['renderer']);
 };
