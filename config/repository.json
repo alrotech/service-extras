@@ -1,10 +1,28 @@
 {
-  "name" : "aestore.by",
-  "desc" : "desc",
-  "rest" : "base rest link ",
-
-  "packages" : [
-    {"vcs" : "link to repo https bla-bla-bla 1"},
-    {"vcs" : "link to repo https bla-bla-bla 2"}
+  "repositories": [
+    {
+      "name": "Packages for site",
+      "description": "Special delivered packages for this site",
+      "domains": [
+        "modcasts.video.loc"
+      ],
+      "categories": [
+        {
+          "name": "Utils",
+          "templated": 0,
+          "packages": [
+            "https://github.com/Alroniks/modx-bpsubscription",
+            "https://github.com/Alroniks/modx-videocast"
+          ]
+        },
+        {
+          "name": "Themes",
+          "templated": 1,
+          "packages": [
+            "https://github.com/Alroniks/mdv-theme"
+          ]
+        }
+      ]
+    }
   ]
 }

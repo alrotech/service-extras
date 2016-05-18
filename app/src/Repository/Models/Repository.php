@@ -1,5 +1,7 @@
 <?php
 
+namespace alroniks\repository\models;
+
 class Repository
 {
     //public $

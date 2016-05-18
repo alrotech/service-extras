@@ -1,6 +1,6 @@
 {
     "name": "alroniks/repository",
-    "description": "",
+    "description": "Package repository for MODX Package Manager based on packages, that are placed on GitHub",
     "license": "proprietary",
     "type": "project",
     "keywords": ["slim", "modx", "repository"],
@@ -13,15 +13,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "App\\" : "app/"
+            "alroniks\\repository" : "app/src/Repository"
         }
     },
     "require": {
         "slim/slim": "^3.4",
-        "monolog/monolog": "^1.19",
         "sabre/xml": "^1.4"
     },
-
     "minimum-stability": "stable",
     "prefer-stable": true
 }
