@@ -38,7 +38,12 @@ class Renderer
                 break;
             case 'application/xml':
             default:
-                $xml = Array2XML::createXML('root', $data);
+                if (count($data) === 1) {
+                    $key = key($data);
+                    $xml = Array2XML::createXML($key, $data[$key]);
+                } else {
+                    $xml = Array2XML::createXML('root', $data);
+                }
                 $output = $xml->saveXML();
                 break;
         }

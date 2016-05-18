@@ -31,6 +31,7 @@ class Home
      */
     public function verify(Request $request, Response $response)
     {
+        // todo: add full check of user and key and access from site to repository
         /** @var Response $response */
         $response = $this->renderer->render($response, [
             'status' => ['verified' => 1]
@@ -48,10 +49,10 @@ class Home
      */
     public function index(Request $request, Response $response)
     {
+        // todo: collect real stats from repository (get data about available packages for this user)
         $answer = [
             'packages' => '1',
             'downloads' => '5',
-            'url' =>  '/rest/package',
             'topdownloaded' => [
                 'id' => '1',
                 'name' => 'Markdown Editor',
