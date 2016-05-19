@@ -3,7 +3,7 @@
 namespace Alroniks\Repository;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
-use Alroniks\Repository\Models\Repository\Factory;
+use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
 use Alroniks\Repository\Models\Repository\Repository;
 use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
 use Slim\Http\Request;
@@ -39,20 +39,18 @@ class Initializer
      */
     public function __invoke(Request $request, Response $response, $next)
     {
-        $repositoryStorage = new RepositoryStorage($this->persistence, new Factory());
+        $repositoryStorage = new RepositoryStorage($this->persistence, new RepositoryFactory());
         
         $rank = 0;
         foreach ($this->config->repositories as $repository) {
-            $repositoryStorage->add(new Repository(
-                null,
-                $repository->name,
-                $repository->description,
-                'now',
-                $rank,
-                $repository->templated
-            ));
+            $repositoryStorage->add((new RepositoryFactory())->make([
+                null, $repository->name, $repository->description,
+                'now', $rank, $repository->templated
+            ]));
             $rank++;
         }
+
+        //print_r($this->persistence);
 
         $response = $next($request, $response);
 
@@ -63,11 +61,6 @@ class Initializer
     {
         
     }
-
-
 }
-// список репозиториев
-// список категорий + 1 динамическая общаяя
-// список пакетов (+meta фетчер)
 
 

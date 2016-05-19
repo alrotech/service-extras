@@ -31,7 +31,7 @@ final class Repository
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
-        $this->createdon = $createdon;
+        $this->createdon = $createdon instanceof DateTime ? $createdon : new DateTime($createdon);
         $this->rank = $rank;
         $this->templated = $templated;
     }
