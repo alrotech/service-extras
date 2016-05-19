@@ -7,10 +7,10 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * Class Home
- * @package alroniks\repository\controllers
+ * Class HomeController
+ * @package Alroniks\Repository\Controllers
  */
-class Home
+class HomeController
 {
     private $renderer;
 

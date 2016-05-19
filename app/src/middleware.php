@@ -1,3 +1,3 @@
 <?php
 
-// empty
+$app->add($app->getContainer()->get('initializer'));

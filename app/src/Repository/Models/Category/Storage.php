@@ -2,53 +2,22 @@
 
 namespace Alroniks\Repository\Models\Category;
 
-use Alroniks\Repository\Contracts\PersistenceInterface;
-use Alroniks\Repository\InMemoryPersistence;
-
 /**
  * Class Storage
  * @package Alroniks\Repository\Models\Category
  */
-class Storage
+class Storage extends \Alroniks\Repository\Models\Storage
 {
-    /** @var InMemoryPersistence */
-    private $persistence;
-    
-    /** @var Factory */
-    private $factory;
-
-    /**
-     * Storage constructor.
-     * @param PersistenceInterface|null $persistence
-     */
-    public function __construct(PersistenceInterface $persistence = null)
-    {
-        $this->persistence = $persistence ?: new InMemoryPersistence();
-        $this->factory = new Factory();
-    }
-
     /**
      * @param Category $category
      */
     public function add(Category $category)
     {
-        $this->persistence->persist([
+        $this->persistence->persist($category->getId(), [
             $category->getRepositoryId(),
             $category->getId(),
             $category->getName()
         ]);
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function findById($id)
-    {
-        return current(array_filter($this->findAll(), function ($category) use ($id) {
-            /** @var Category $category */
-            return $category->getId() == $id;
-        }));
     }
 
     /**
@@ -63,17 +32,4 @@ class Storage
         });
     }
 
-    /**
-     * @return array
-     */
-    public function findAll()
-    {
-        $repositories = [];
-
-        foreach ($this->persistence->retrieveAll() as $repository) {
-            $repositories[] = $this->factory->make($repository);
-        }
-
-        return $repositories;
-    }
 }

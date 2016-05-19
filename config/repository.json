@@ -3,6 +3,7 @@
     {
       "name": "Packages for site",
       "description": "Special delivered packages for this site",
+      "templated": false,
       "domains": [
         "modcasts.video.loc"
       ],
@@ -23,6 +24,10 @@
           ]
         }
       ]
+    }, {
+      "name": "Common packages",
+      "description": "Common list of available packages for install",
+      "templated": false
     }
   ]
 }

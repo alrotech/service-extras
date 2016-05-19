@@ -2,8 +2,10 @@
 
 namespace Alroniks\Repository\Controllers;
 
+use Alroniks\Repository\Contracts\PersistenceInterface;
 use Alroniks\Repository\Models\Category\Category;
-use Alroniks\Repository\Models\Repository\Repository;
+use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
+use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
 use Alroniks\Repository\Models\Repository\Transformer as RepositoryTransformer;
@@ -31,15 +33,13 @@ class RepositoryController
     /**
      * Repository constructor.
      * @param Renderer $renderer
+     * @param PersistenceInterface $persistence
      */
-    public function __construct(Renderer $renderer)
+    public function __construct(Renderer $renderer, PersistenceInterface $persistence)
     {
         $this->renderer = $renderer;
-        $this->repositoriesStorage = new RepositoryStorage();
-        $this->categoriesStorage = new CategoryStorage();
-
-        $this->repositoriesStorage->add(new Repository(null, 'Packages for site', 'Special delivered packages for this site', 'now', 0, 0));
-
+        $this->repositoriesStorage = new RepositoryStorage($persistence, new RepositoryFactory());
+        $this->categoriesStorage = new CategoryStorage($persistence, new CategoryFactory());
     }
 
     /**
