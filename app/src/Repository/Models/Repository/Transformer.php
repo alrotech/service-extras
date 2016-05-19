@@ -16,7 +16,7 @@ class Transformer
             ],
             'createdon' => $repository->getCreatedOn()->format(DateTime::ISO8601),
             'rank' => $repository->getRank(),
-            'packages' => 10, // generic
+            'packages' => 10, // generic todo count packages in repository?
             'templated' => $repository->getTemplated()
         ];
     }

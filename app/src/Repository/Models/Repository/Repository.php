@@ -88,5 +88,7 @@ final class Repository
      * @param $field
      * @param $value
      */
-    public function __set($field, $value) {}
+    public function __set($field, $value)
+    {
+    }
 }

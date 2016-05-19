@@ -1,40 +1,21 @@
 <?php
 
-namespace alroniks\repository\models;
+namespace Alroniks\Repository\Models\Category;
 
-class Model {
-
-    protected $id;
-
-    protected function identifier($value)
-    {
-        $this->id = substr(md5(md5($value)), 10);
-    }
-
-    public function toArray()
-    {
-        return [];
-    }
-}
-
-final class Category extends Model
+final class Category
 {
+    private $id;
     private $name;
     private $templated;
 
     public function __construct($name, $templated)
     {
-        $this->identifier($name);
+
         $this->name = $name;
         $this->templated = (bool)$templated;
     }
-    
-    public function getPackages()
-    {
-        
-    }
-    
-    
+
+
 }
 
 

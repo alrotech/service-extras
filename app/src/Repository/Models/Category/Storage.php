@@ -1,31 +1,21 @@
 <?php
 
-namespace Alroniks\Repository\Models\Repository;
+namespace Alroniks\Repository\Models\Category;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
 use Alroniks\Repository\InMemoryPersistence;
 
 class Storage
 {
-    /** @var InMemoryPersistence */
     private $persistence;
-
-    /** @var Factory */
     private $factory;
 
-    /**
-     * Storage constructor.
-     * @param PersistenceInterface|null $persistence
-     */
     public function __construct(PersistenceInterface $persistence = null)
     {
         $this->persistence = $persistence ?: new InMemoryPersistence();
         $this->factory = new Factory();
     }
 
-    /**
-     * @param Repository $repository
-     */
     public function add(Repository $repository)
     {
         $this->persistence->persist([
@@ -38,10 +28,6 @@ class Storage
         ]);
     }
 
-    /**
-     * @param $id
-     * @return Repository
-     */
     public function findById($id)
     {
         return current(array_filter($this->findAll(), function ($repository) use ($id) {
@@ -50,9 +36,6 @@ class Storage
         }));
     }
 
-    /**
-     * @return Repository[]
-     */
     public function findAll()
     {
         $repositories = [];

@@ -6,12 +6,8 @@ class Package
 {
     private $id;
     private $version;
-    
-    
 
 
-
-        
 }
 
 
@@ -27,7 +23,7 @@ $results[] = array(
     'createdon' => (string)$package->createdon,
     'editedon' => (string)$package->editedon,
     'name' => (string)$package->name,
-    'downloads' => number_format((integer)$package->downloads,0),
+    'downloads' => number_format((integer)$package->downloads, 0),
     'releasedon' => $releasedon,
     'screenshot' => (string)$package->screenshot,
     'thumbnail' => !empty($package->thumbnail) ? (string)$package->thumbnail : (string)$package->screenshot,

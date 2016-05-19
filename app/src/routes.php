@@ -9,10 +9,4 @@ $app->get('/verify', 'HomeController:verify')->setName('verify');
 $app->get('/home', 'HomeController:index')->setName('home');
 
 $app->get('/repository', 'RepositoryController:index')->setName('repository-list');
-
-// categories
-$app->get('/repository/{id:[0-9a-b]+}', 'RepositoryController:show')->setName('repository-single');
-// 'supports' => $productVersion, and other params available
-
-
-
+$app->get('/repository/{id:[0-9a-z]+}', 'RepositoryController:show')->setName('repository-single');

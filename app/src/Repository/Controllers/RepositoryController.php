@@ -2,8 +2,8 @@
 
 namespace Alroniks\Repository\Controllers;
 
-use Alroniks\Repository\Models\Repository\Storage;
 use Alroniks\Repository\Models\Repository\Repository;
+use Alroniks\Repository\Models\Repository\Storage;
 use Alroniks\Repository\Models\Repository\Transformer;
 use Alroniks\Repository\Renderer;
 use Slim\Http\Request;
@@ -29,6 +29,9 @@ class RepositoryController
     {
         $this->renderer = $renderer;
         $this->storage = new Storage();
+
+        $this->storage->add(new Repository(null, 'Packages for site', 'Special delivered packages for this site', 'now',
+            0, 0));
     }
 
     /**
@@ -38,8 +41,6 @@ class RepositoryController
      */
     public function index(Request $request, Response $response)
     {
-        $this->storage->add(new Repository(null, 'Packages for site', 'Special delivered packages for this site', 'now', 0, 0));
-
         $repositories = $this->storage->findAll();
 
         foreach ($repositories as &$repository) {
@@ -61,17 +62,26 @@ class RepositoryController
 
         return $response->withStatus(200);
     }
-    
-    public function show(Request $request, Response $response, $params)
+
+    public function show(Request $request, Response $response)
     {
-        $body = $request->getBody();
+        $repositoryId = $request->getAttribute('id');
 
-        file_put_contents('body.txt', print_r($request->getQueryParams(), true));
+        $repository = $this->storage->findById($repositoryId);
 
-        $answer = [];
+        //$cStorage = 
 
-        /** @var Response $response */
-        $response = $this->renderer->render($response, $answer);
-        $response->withStatus(200);
+        $categories =
+
+
+            //print_r($repository);
+
+
+            /** @var Response $response */
+        $response = $this->renderer->render($response, [
+            'repository' => Transformer::transform($repository)
+        ]);
+
+        return $response->withStatus(200);
     }
 }
