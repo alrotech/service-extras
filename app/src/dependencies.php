@@ -1,9 +1,9 @@
 <?php
 
-use alroniks\repository\controllers\Home;
-use alroniks\repository\controllers\Package;
-use alroniks\repository\controllers\Repository;
-use alroniks\repository\Renderer;
+use Alroniks\Repository\Controllers\Home;
+use Alroniks\Repository\Controllers\Package;
+use Alroniks\Repository\Controllers\RepositoryController;
+use Alroniks\Repository\Renderer;
 
 $container = $app->getContainer();
 
@@ -18,7 +18,7 @@ $container['HomeController'] = function ($c) {
 };
 
 $container['RepositoryController'] = function ($c) {
-    return new Repository($c['renderer']);
+    return new RepositoryController($c['renderer']);
 };
 
 $container['PackageController'] = function ($c) {

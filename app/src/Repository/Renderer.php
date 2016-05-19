@@ -1,6 +1,6 @@
 <?php
 
-namespace alroniks\repository;
+namespace Alroniks\Repository;
 
 use LSS\Array2XML;
 use Slim\Http\Body;

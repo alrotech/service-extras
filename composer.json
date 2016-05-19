@@ -13,12 +13,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "alroniks\\repository\\" : "app/src/Repository"
+            "Alroniks\\Repository\\" : "app/src/Repository"
         }
     },
     "require": {
         "slim/slim": "^3.4",
-        "openlss/lib-array2xml": "^0.0.10"
+        "openlss/lib-array2xml": "^0.0.10",
+        "predis/predis": "^1.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

@@ -1,6 +1,6 @@
 <?php
 
-namespace alroniks\repository\controllers;
+namespace Alroniks\Repository\Controllers;
 
 use alroniks\repository\Renderer;
 
