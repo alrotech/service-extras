@@ -5,37 +5,67 @@ namespace Alroniks\Repository\Models\Category;
 use Alroniks\Repository\Contracts\PersistenceInterface;
 use Alroniks\Repository\InMemoryPersistence;
 
+/**
+ * Class Storage
+ * @package Alroniks\Repository\Models\Category
+ */
 class Storage
 {
+    /** @var InMemoryPersistence */
     private $persistence;
+    
+    /** @var Factory */
     private $factory;
 
+    /**
+     * Storage constructor.
+     * @param PersistenceInterface|null $persistence
+     */
     public function __construct(PersistenceInterface $persistence = null)
     {
         $this->persistence = $persistence ?: new InMemoryPersistence();
         $this->factory = new Factory();
     }
 
-    public function add(Repository $repository)
+    /**
+     * @param Category $category
+     */
+    public function add(Category $category)
     {
         $this->persistence->persist([
-            $repository->getId(),
-            $repository->getName(),
-            $repository->getDescription(),
-            $repository->getCreatedOn(),
-            $repository->getRank(),
-            $repository->getTemplated()
+            $category->getRepositoryId(),
+            $category->getId(),
+            $category->getName()
         ]);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function findById($id)
     {
-        return current(array_filter($this->findAll(), function ($repository) use ($id) {
-            /** @var Repository $repository */
-            return $repository->getId() == $id;
+        return current(array_filter($this->findAll(), function ($category) use ($id) {
+            /** @var Category $category */
+            return $category->getId() == $id;
         }));
     }
 
+    /**
+     * @param $repositoryId
+     * @return array
+     */
+    public function findByRepositoryId($repositoryId)
+    {
+        return array_filter($this->findAll(), function ($category) use ($repositoryId) {
+            /** @var Category $category */
+            return $category->getRepositoryId() == $repositoryId;
+        });
+    }
+
+    /**
+     * @return array
+     */
     public function findAll()
     {
         $repositories = [];

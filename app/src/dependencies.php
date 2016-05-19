@@ -1,7 +1,7 @@
 <?php
 
 use Alroniks\Repository\Controllers\Home;
-use Alroniks\Repository\Controllers\Package;
+use Alroniks\Repository\Controllers\PackageController;
 use Alroniks\Repository\Controllers\RepositoryController;
 use Alroniks\Repository\Renderer;
 
@@ -22,5 +22,5 @@ $container['RepositoryController'] = function ($c) {
 };
 
 $container['PackageController'] = function ($c) {
-    return new Package($c['renderer']);
+    return new PackageController($c['renderer']);
 };

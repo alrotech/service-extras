@@ -2,10 +2,14 @@
 
 namespace Alroniks\Repository\Controllers;
 
+use Alroniks\Repository\Models\Category\Category;
 use Alroniks\Repository\Models\Repository\Repository;
-use Alroniks\Repository\Models\Repository\Storage;
-use Alroniks\Repository\Models\Repository\Transformer;
+use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
+use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
+use Alroniks\Repository\Models\Repository\Transformer as RepositoryTransformer;
+use Alroniks\Repository\Models\Category\Transformer as CategoryTransformer;
 use Alroniks\Repository\Renderer;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -18,8 +22,11 @@ class RepositoryController
     /** @var Renderer */
     private $renderer;
 
-    /** @var Storage */
-    private $storage;
+    /** @var RepositoryStorage */
+    private $repositoriesStorage;
+
+    /** @var CategoryStorage */
+    private $categoriesStorage;
 
     /**
      * Repository constructor.
@@ -28,23 +35,24 @@ class RepositoryController
     public function __construct(Renderer $renderer)
     {
         $this->renderer = $renderer;
-        $this->storage = new Storage();
+        $this->repositoriesStorage = new RepositoryStorage();
+        $this->categoriesStorage = new CategoryStorage();
 
-        $this->storage->add(new Repository(null, 'Packages for site', 'Special delivered packages for this site', 'now',
-            0, 0));
+        $this->repositoriesStorage->add(new Repository(null, 'Packages for site', 'Special delivered packages for this site', 'now', 0, 0));
+
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @return mixed
+     * @return Response
      */
     public function index(Request $request, Response $response)
     {
-        $repositories = $this->storage->findAll();
+        $repositories = $this->repositoriesStorage->findAll();
 
         foreach ($repositories as &$repository) {
-            $repository = Transformer::transform($repository);
+            $repository = RepositoryTransformer::transform($repository);
         }
 
         /** @var Response $response */
@@ -63,23 +71,38 @@ class RepositoryController
         return $response->withStatus(200);
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     * @throws NotFoundException
+     */
     public function show(Request $request, Response $response)
     {
         $repositoryId = $request->getAttribute('id');
 
-        $repository = $this->storage->findById($repositoryId);
+        // ????
+        $this->categoriesStorage->add(new Category($repositoryId, null, 'Tag 1'));
+        $this->categoriesStorage->add(new Category($repositoryId, null, 'Tag 2'));
 
-        //$cStorage = 
+        $repository = $this->repositoriesStorage->findById($repositoryId);
 
-        $categories =
+        if (!$repository) {
+            throw new NotFoundException($request, $response);
+        }
 
+        $categories = $this->categoriesStorage->findByRepositoryId($repositoryId);
 
-            //print_r($repository);
+        foreach ($categories as &$category) {
+            $category = CategoryTransformer::transform($category);
+        }
 
-
-            /** @var Response $response */
+        /** @var Response $response */
         $response = $this->renderer->render($response, [
-            'repository' => Transformer::transform($repository)
+            'repository' => array_merge(
+                RepositoryTransformer::transform($repository),
+                ['tag' => $categories]
+            )
         ]);
 
         return $response->withStatus(200);

@@ -8,7 +8,7 @@ use alroniks\repository\Renderer;
  * Class Package
  * @package alroniks\repository\controllers
  */
-class Package
+class PackageController
 {
     private $renderer;
 
