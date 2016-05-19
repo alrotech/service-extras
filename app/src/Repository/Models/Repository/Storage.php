@@ -39,18 +39,6 @@ class Storage
     }
 
     /**
-     * @param $id
-     * @return Repository
-     */
-    public function findById($id)
-    {
-        return current(array_filter($this->findAll(), function ($repository) use ($id) {
-            /** @var Repository $repository */
-            return $repository->getId() == $id;
-        }));
-    }
-
-    /**
      * @return Repository[]
      */
     public function findAll()
@@ -62,5 +50,17 @@ class Storage
         }
 
         return $repositories;
+    }
+
+    /**
+     * @param $id
+     * @return Repository
+     */
+    public function findById($id)
+    {
+        return current(array_filter($this->findAll(), function ($repository) use ($id) {
+            /** @var Repository $repository */
+            return $repository->getId() == $id;
+        }));
     }
 }

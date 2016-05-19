@@ -28,7 +28,7 @@ class Factory implements FactoryInterface
             (string)$components[2],
             new DateTime((string)$components[3] ?: 'now'),
             (int)$components[4],
-            (bool)$components[5]
+            (int)$components[5]
         );
     }
 }

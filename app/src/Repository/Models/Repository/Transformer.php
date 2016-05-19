@@ -4,8 +4,16 @@ namespace Alroniks\Repository\Models\Repository;
 
 use DateTime;
 
+/**
+ * Class Transformer
+ * @package Alroniks\Repository\Models\Repository
+ */
 class Transformer
 {
+    /**
+     * @param Repository $repository
+     * @return array
+     */
     public static function transform(Repository $repository)
     {
         return [

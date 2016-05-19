@@ -2,8 +2,16 @@
 
 namespace Alroniks\Repository\Models\Category;
 
+/**
+ * Class Transformer
+ * @package Alroniks\Repository\Models\Category
+ */
 class Transformer
 {
+    /**
+     * @param Category $category
+     * @return array
+     */
     public static function transform(Category $category)
     {
         return [
