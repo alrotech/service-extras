@@ -100,25 +100,64 @@ class Initializer
 
     private function fetchPackageMeta($url)
     {
-        // fetch by github api data
+        list($owner, $repository) = explode('/', strtolower(str_replace('https://github.com/', '', $url)));
+
+        $package = $this->request('/repos/:owner/:repo/contents/transport.json', $owner, $repository);
+        $packageMeta = json_decode(file_get_contents($package['download_url']));
+
+        $instructions = $this->request('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
+        $changeLog = $this->request('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
+
+        $release = $this->request('/repos/:owner/:repo/releases/latest', $owner, $repository);
+
+        $file = isset($release['assets'][0]) && $release['assets'][0]['browser_download_url']
+            ? $release['assets'][0]['browser_download_url']
+            : '';
+
+        $downloads = isset($release['assets'][0]) && $release['assets'][0]['download_count']
+            ? $release['assets'][0]['download_count']
+            : 0;
 
         return [
-            'videocast',
-            '0.0.1',
-            'Ivan Klimchuk',
-            'MIT',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            '30 april 2016',
-            '18 may 2016',
-            '20 may 2016',
-            '',
-            '',
-            '2.4.0',
-            '2.6.0',
-            'mysql',
-            'link to file for download'
+            $packageMeta->name,
+            $release['tag_name'],
+            $packageMeta->author,
+            $packageMeta->license,
+            $packageMeta->description,
+            file_get_contents($instructions['download_url']),
+            file_get_contents($changeLog['download_url']),
+            $release['created_at'],
+            $release['created_at'],
+            $release['published_at'],
+            $packageMeta->screenshot,
+            $packageMeta->thumbnail,
+            $packageMeta->support->modx,
+            10000000,
+            join(', ', $packageMeta->support->db),
+            $downloads,
+            $file
         ];
+    }
+
+    private function request($url, $owner, $repository)
+    {
+        $baseUrl = 'https://api.github.com';
+        $secret = trim(file_get_contents("config/$owner.key"));
+
+        $url = str_replace([':owner', ':repo'], [$owner, $repository], $url);
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => strpos($url, 'http') !== false ? $url : $baseUrl . $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_USERAGENT => 'Alroniks Package Store',
+            CURLOPT_HEADER => false,
+            CURLOPT_USERPWD => join(':', [$owner, $secret])
+        ]);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($result, true);
     }
 }

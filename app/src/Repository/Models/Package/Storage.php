@@ -27,6 +27,7 @@ class Storage extends \Alroniks\Repository\Models\Storage
             $package->getMinimum(),
             $package->getMaximum(),
             $package->getDatabases(),
+            $package->getDownloads(),
             $package->getPackage()
         ]);
     }

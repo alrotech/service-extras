@@ -10,11 +10,7 @@
       ],
       "categories": [
         {
-          "name": "Utils",
-          "packages": [
-            "https://github.com/Alroniks/modx-bpsubscription",
-            "https://github.com/Alroniks/modx-videocast"
-          ]
+          "name": "Utils"
         },
         {
           "name": "Themes",
