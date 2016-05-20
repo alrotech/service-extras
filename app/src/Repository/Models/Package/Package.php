@@ -2,6 +2,8 @@
 
 namespace Alroniks\Repository\Models\Package;
 
+use DateTime;
+
 /**
  * Class Package
  * @package Alroniks\Repository\Models\Package
@@ -38,8 +40,11 @@ final class Package
     // path to file
     private $package;
 
+    private $categoryId;
+
     /**
      * Package constructor.
+     * @param $categoryId
      * @param $id
      * @param $name
      * @param $version
@@ -59,6 +64,7 @@ final class Package
      * @param $package
      */
     public function __construct(
+        $categoryId,
         $id,
         $name,
         $version,
@@ -77,6 +83,7 @@ final class Package
         $databases,
         $package
     ) {
+        $this->categoryId = $categoryId;
         $this->id = $id;
         $this->name = $name;
         $this->version = $version;
@@ -85,15 +92,23 @@ final class Package
         $this->description = $description;
         $this->instructions = $instructions;
         $this->changelog = $changelog;
-        $this->createdon = $createdon;
-        $this->editedon = $editedon;
-        $this->releasedon = $releasedon;
+        $this->createdon = $createdon instanceof DateTime ? $createdon : new DateTime($createdon);
+        $this->editedon = $editedon instanceof DateTime ? $editedon : new DateTime($editedon);
+        $this->releasedon = $releasedon instanceof DateTime ? $releasedon : new DateTime($releasedon);
         $this->cover = $cover;
         $this->thumb = $thumb;
         $this->minimum = $minimum;
         $this->maximum = $maximum;
         $this->databases = $databases;
         $this->package = $package;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
     }
 
     /**

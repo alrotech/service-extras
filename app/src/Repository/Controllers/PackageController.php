@@ -2,6 +2,8 @@
 
 namespace Alroniks\Repository\Controllers;
 
+use Alroniks\Repository\Contracts\PersistenceInterface;
+use Alroniks\Repository\Models\Package\Factory;
 use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Package\Storage;
 use Alroniks\Repository\Models\Package\Transformer;
@@ -24,51 +26,12 @@ class PackageController
     /**
      * Package constructor.
      * @param Renderer $renderer
+     * @param PersistenceInterface $persistence
      */
-    public function __construct(Renderer $renderer)
+    public function __construct(Renderer $renderer, PersistenceInterface $persistence)
     {
         $this->renderer = $renderer;
-        $this->storage = new Storage();
-
-        $this->storage->add(new Package(
-            null,
-            'modcastsvideo',
-            '0.0.0',
-            'Ivan Klimchuk',
-            'MIT',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            '30 april 2016',
-            '18 may 2016',
-            '19 may 2016',
-            '',
-            '',
-            '2.4.0',
-            '2.6.0',
-            'mysql',
-            'link to file for download'
-        ));
-
-        $this->storage->add(new Package(
-            null,
-            'videocast',
-            '0.0.1',
-            'Ivan Klimchuk',
-            'MIT',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            'Packed theme files for website modcasts.video',
-            '30 april 2016',
-            '18 may 2016',
-            '20 may 2016',
-            '',
-            '',
-            '2.4.0',
-            '2.6.0',
-            'mysql',
-            'link to file for download'
-        ));
+        $this->storage = new Storage($persistence, new Factory());
     }
 
     public function search(Request $request, Response $response)
@@ -95,7 +58,7 @@ class PackageController
                 '@attributes' => [
                     'type' => 'array',
                     'total' => 1,
-                    'page' => 1, // todo: need calculate it
+                    'page' => 1,
                     'of' => 1,
                 ],
                 'package' => $packages

@@ -10,6 +10,7 @@ class Storage extends \Alroniks\Repository\Models\Storage
     public function add(Package $package)
     {
         $this->persistence->persist($this->prefix . $package->getId(), [
+            $package->getCategoryId(),
             $package->getId(),
             $package->getName(),
             $package->getVersion(),

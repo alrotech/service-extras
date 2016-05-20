@@ -9,6 +9,8 @@ use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
 use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
 use Alroniks\Repository\Models\Repository\Repository;
 use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
+use Alroniks\Repository\Models\Package\Factory as PackageFactory;
+use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -44,6 +46,7 @@ class Initializer
     {
         $repositoryStorage = new RepositoryStorage($this->persistence, new RepositoryFactory());
         $categoryStorage = new CategoryStorage($this->persistence, new CategoryFactory());
+        $packageStorage = new PackageStorage($this->persistence, new PackageFactory());
 
         $rank = 0;
         /** @var \stdClass $repositoryConfig */
@@ -74,6 +77,15 @@ class Initializer
                     $repository->getId(), null, $categoryConfig->name
                 ]);
                 $categoryStorage->add($category);
+                
+                if (!isset($categoryConfig->packages)) {
+                    continue;
+                }
+                
+                foreach ($categoryConfig->packages as $packageLink) {
+                    $package = (new PackageFactory())->make(array_merge([$category->getId(), null], $this->fetchPackageMeta($packageLink)));
+                    $packageStorage->add($package);
+                }
             }
 
             $rank++;
@@ -86,4 +98,27 @@ class Initializer
         return $response;
     }
 
+    private function fetchPackageMeta($url)
+    {
+        // fetch by github api data
+
+        return [
+            'videocast',
+            '0.0.1',
+            'Ivan Klimchuk',
+            'MIT',
+            'Packed theme files for website modcasts.video',
+            'Packed theme files for website modcasts.video',
+            'Packed theme files for website modcasts.video',
+            '30 april 2016',
+            '18 may 2016',
+            '20 may 2016',
+            '',
+            '',
+            '2.4.0',
+            '2.6.0',
+            'mysql',
+            'link to file for download'
+        ];
+    }
 }
