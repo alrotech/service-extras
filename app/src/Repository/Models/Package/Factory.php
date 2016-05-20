@@ -51,9 +51,11 @@ class Factory implements FactoryInterface
             (string)$components[14],
             (string)$components[15],
             (string)$components[16],
+
+            (integer)$components[17],
         
             // package
-            (string)$components[17]
+            (string)$components[18]
         );
     }
 }

@@ -36,6 +36,8 @@ final class Package
     private $minimum;
     private $maximum;
     private $databases;
+    
+    private $downloads;
 
     // path to file
     private $package;
@@ -60,7 +62,8 @@ final class Package
      * @param $thumb
      * @param $minimum
      * @param $maximum
-     * @param $databases
+     * @param $databases    
+     * @param $downloads
      * @param $package
      */
     public function __construct(
@@ -81,6 +84,7 @@ final class Package
         $minimum,
         $maximum,
         $databases,
+        $downloads,
         $package
     ) {
         $this->categoryId = $categoryId;
@@ -100,6 +104,7 @@ final class Package
         $this->minimum = $minimum;
         $this->maximum = $maximum;
         $this->databases = $databases;
+        $this->downloads = $downloads;
         $this->package = $package;
     }
 
@@ -237,6 +242,14 @@ final class Package
     public function getDatabases()
     {
         return $this->databases;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDownloads()
+    {
+        return $this->downloads;
     }
 
     /**

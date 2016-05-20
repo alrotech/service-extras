@@ -38,8 +38,8 @@ class Transformer
             'minimum_supports' => $package->getMinimum(),
             'breaks_at' => $package->getMaximum() ?: 1000000,
             'supports_db' => $package->getDatabases(),
-            'location' => $package->getPackage(),
-            'downloads' => 11, // generic
+            'downloads' => $package->getDownloads(),
+            'location' => $package->getPackage()
         ];
     }
 }
