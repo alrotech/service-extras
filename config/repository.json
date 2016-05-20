@@ -6,7 +6,7 @@
       "templated": false,
       "domains": [
         "modcasts.video.loc",
-        "repository.aestore.by.loc"
+        "modx.loc"
       ],
       "categories": [
         {
@@ -29,7 +29,7 @@
       "templated": false,
       "domains": [
         "modcasts.video.loc",
-        "repository.aestore.by.loc"
+        "modx.loc"
       ]
     }
   ]

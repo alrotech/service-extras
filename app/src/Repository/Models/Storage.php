@@ -55,6 +55,12 @@ class Storage implements StorageInterface
      */
     public function findById($id)
     {
-        return $this->factory->make($this->persistence->retrieve($this->prefix . $id));
+        $entity = $this->persistence->retrieve($this->prefix . $id);
+
+        if ($entity) {
+            return $this->factory->make($entity);
+        }
+
+        return null;
     }
 }

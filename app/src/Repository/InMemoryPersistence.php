@@ -27,7 +27,9 @@ class InMemoryPersistence implements PersistenceInterface
      */
     public function retrieve($key)
     {
-        return $this->data[$key];
+        if (array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        }
     }
 
     /**

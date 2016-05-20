@@ -51,7 +51,7 @@ class Initializer
 
             // not show this repository if domain are not allowed
             if (!empty($repositoryConfig->domains)) {
-                if (!in_array($request->getServerParams()['HTTP_HOST'], $repositoryConfig->domains)) {
+                if (!in_array($request->getParam('http_host'), $repositoryConfig->domains)) {
                     continue;
                 }
             }
@@ -78,6 +78,8 @@ class Initializer
 
             $rank++;
         }
+
+        //print_r($this->persistence);
 
         $response = $next($request, $response);
 
