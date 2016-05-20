@@ -3,13 +3,12 @@
 namespace Alroniks\Repository\Controllers;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
-use Alroniks\Repository\Models\Category\Category;
-use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
 use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
-use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
-use Alroniks\Repository\Models\Repository\Transformer as RepositoryTransformer;
 use Alroniks\Repository\Models\Category\Transformer as CategoryTransformer;
+use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
+use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
+use Alroniks\Repository\Models\Repository\Transformer as RepositoryTransformer;
 use Alroniks\Repository\Renderer;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
@@ -80,11 +79,6 @@ class RepositoryController
     public function show(Request $request, Response $response)
     {
         $repositoryId = $request->getAttribute('id');
-
-        // ????
-        $this->categoriesStorage->add(new Category($repositoryId, null, 'Tag 1'));
-        $this->categoriesStorage->add(new Category($repositoryId, null, 'Tag 2'));
-
         $repository = $this->repositoriesStorage->findById($repositoryId);
 
         if (!$repository) {
@@ -92,7 +86,6 @@ class RepositoryController
         }
 
         $categories = $this->categoriesStorage->findByRepositoryId($repositoryId);
-
         foreach ($categories as &$category) {
             $category = CategoryTransformer::transform($category);
         }

@@ -5,12 +5,12 @@
       "description": "Special delivered packages for this site",
       "templated": false,
       "domains": [
-        "modcasts.video.loc"
+        "modcasts.video.loc",
+        "repository.aestore.by.loc"
       ],
       "categories": [
         {
           "name": "Utils",
-          "templated": 0,
           "packages": [
             "https://github.com/Alroniks/modx-bpsubscription",
             "https://github.com/Alroniks/modx-videocast"
@@ -18,7 +18,6 @@
         },
         {
           "name": "Themes",
-          "templated": 1,
           "packages": [
             "https://github.com/Alroniks/mdv-theme"
           ]
@@ -27,7 +26,11 @@
     }, {
       "name": "Common packages",
       "description": "Common list of available packages for install",
-      "templated": false
+      "templated": false,
+      "domains": [
+        "modcasts.video.loc",
+        "repository.aestore.by.loc"
+      ]
     }
   ]
 }

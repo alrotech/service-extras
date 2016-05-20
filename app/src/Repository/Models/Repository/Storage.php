@@ -9,7 +9,7 @@ class Storage extends \Alroniks\Repository\Models\Storage
      */
     public function add(Repository $repository)
     {
-        $this->persistence->persist($repository->getId(), [
+        $this->persistence->persist($this->prefix . $repository->getId(), [
             $repository->getId(),
             $repository->getName(),
             $repository->getDescription(),

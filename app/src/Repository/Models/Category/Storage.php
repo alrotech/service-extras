@@ -13,7 +13,7 @@ class Storage extends \Alroniks\Repository\Models\Storage
      */
     public function add(Category $category)
     {
-        $this->persistence->persist($category->getId(), [
+        $this->persistence->persist($this->prefix . $category->getId(), [
             $category->getRepositoryId(),
             $category->getId(),
             $category->getName()

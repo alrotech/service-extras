@@ -9,6 +9,8 @@ use Alroniks\Repository\InMemoryPersistence;
 
 class Storage implements StorageInterface
 {
+    protected $prefix;
+    
     /** @var InMemoryPersistence */
     protected $persistence;
 
@@ -24,6 +26,8 @@ class Storage implements StorageInterface
     {
         $this->persistence = $persistence;
         $this->factory = $factory;
+        
+        $this->prefix = get_class($this) . ':';
     }
 
     /**
@@ -33,7 +37,12 @@ class Storage implements StorageInterface
     {
         $elements = [];
 
-        foreach ($this->persistence->retrieveAll() as $element) {
+        foreach ($this->persistence->retrieveAll() as $key => $element) {
+            $prefix = explode(':', $key)[0] . ':';
+            if ($prefix !== $this->prefix) {
+                continue;
+            }
+
             $elements[] = $this->factory->make($element);
         }
 
@@ -46,6 +55,6 @@ class Storage implements StorageInterface
      */
     public function findById($id)
     {
-        $this->persistence->retrieve($id);
+        return $this->factory->make($this->persistence->retrieve($this->prefix . $id));
     }
 }
