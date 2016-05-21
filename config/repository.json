@@ -1,8 +1,25 @@
 {
   "repositories": [
     {
-      "name": "Packages for site",
-      "description": "Special delivered packages for this site",
+      "name": "Общие пакеты",
+      "description": "Общедоступные пакеты для всех сайтов",
+      "templated": false,
+      "domains": [],
+      "categories": [
+        {
+          "name": "Коммерция"
+        },
+        {
+          "name": "Чаты"
+        },
+        {
+          "name": "Утилиты"
+        }
+      ]
+    },
+    {
+      "name": "MODCASTS.VIDEO",
+      "description": "Специальные пакеты и сборки пакетов для сайта",
       "templated": false,
       "domains": [
         "modcasts.video.loc",
@@ -10,22 +27,17 @@
       ],
       "categories": [
         {
-          "name": "Utils"
+          "name": "Финансы"
         },
         {
-          "name": "Themes",
+          "name": "Содержимое"
+        },
+        {
+          "name": "Оформление",
           "packages": [
             "https://github.com/Alroniks/mdv-theme"
           ]
         }
-      ]
-    }, {
-      "name": "Common packages",
-      "description": "Common list of available packages for install",
-      "templated": false,
-      "domains": [
-        "modcasts.video.loc",
-        "modx.loc"
       ]
     }
   ]

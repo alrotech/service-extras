@@ -2,11 +2,13 @@
 
 namespace Alroniks\Repository\Models\Category;
 
+use Alroniks\Repository\Models\AbstractStorage;
+
 /**
  * Class Storage
  * @package Alroniks\Repository\Models\Category
  */
-class Storage extends \Alroniks\Repository\Models\Storage
+class Storage extends AbstractStorage
 {
     /**
      * @param Category $category

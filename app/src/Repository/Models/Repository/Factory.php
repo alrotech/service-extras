@@ -18,17 +18,17 @@ class Factory implements FactoryInterface
     public function make($components)
     {
         // generate unique identifier
-        if (!$components[0]) {
-            $components[0] = substr(md5(md5($components[1])), 0, 10);
+        if (!$components['id']) {
+            $components['id'] = Repository::ID($components['name']);
         }
 
         return new Repository(
-            $components[0],
-            (string)$components[1],
-            (string)$components[2],
-            $components[3],
-            (int)$components[4],
-            (int)$components[5]
+            $components['id'],
+            (string)$components['name'],
+            (string)$components['description'],
+            $components['createdon'],
+            (int)$components['rank'],
+            (int)$components['templated']
         );
     }
 }
