@@ -48,7 +48,7 @@ class RepositoryController
      */
     public function index(Request $request, Response $response)
     {
-        $repositories = $this->repositoriesStorage->findAll();
+        $repositories = $this->repositoriesStorage->all();
 
         foreach ($repositories as &$repository) {
             $repository = RepositoryTransformer::transform($repository);

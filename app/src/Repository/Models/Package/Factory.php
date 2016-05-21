@@ -19,7 +19,7 @@ class Factory implements FactoryInterface
     {
         // generate unique identifier
         if (!$components[1]) {
-            $components[1] = substr(md5(md5($components[2] . $components[3] . 'pl')), 0, 10);
+            $components[1] = substr(md5(md5($components[0] . $components[2] . $components[3] . 'pl')), 0, 10);
         }
 
         return new Package(

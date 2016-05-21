@@ -2,7 +2,9 @@
 
 namespace Alroniks\Repository\Models\Package;
 
-class Storage extends \Alroniks\Repository\Models\Storage
+use Alroniks\Repository\Models\AbstractStorage;
+
+class Storage extends AbstractStorage
 {
     /**
      * @param Package $package

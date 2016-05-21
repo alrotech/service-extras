@@ -11,9 +11,16 @@ interface PersistenceInterface
     /**
      * @param $key
      * @param $data
+     * @param $ttl
+     * @return
+     */
+    public function persist($key, $data, $ttl = 0);
+
+    /**
+     * @param $key
      * @return mixed
      */
-    public function persist($key, $data);
+    public function purge($key);
 
     /**
      * @param $key
@@ -22,7 +29,8 @@ interface PersistenceInterface
     public function retrieve($key);
 
     /**
+     * @param $key
      * @return mixed
      */
-    public function retrieveAll();
+    public function collection($key);
 }

@@ -58,21 +58,30 @@ class Initializer
                     continue;
                 }
             }
-
-            /** @var Repository $repository */
-            $repository = (new RepositoryFactory())->make([
-                null, $repositoryConfig->name, $repositoryConfig->description,
-                'now', $rank, $repositoryConfig->templated
-            ]);
-            $repositoryStorage->add($repository);
+            
+            $repositoryId = Repository::ID($repositoryConfig->name);
+            if (!$repositoryStorage->exists($repositoryId)) {
+                /** @var Repository $repository */
+                $repository = (new RepositoryFactory())->make([
+                    'id' => $repositoryId,
+                    'name' => $repositoryConfig->name,
+                    'description' => $repositoryConfig->description,
+                    'createdon' => 'now',
+                    'rank' => $rank,
+                    'templated' => $repositoryConfig->templated
+                ]);
+                $repositoryStorage->create($repository);
+            }
 
             if (!isset($repositoryConfig->categories)) {
                 continue;
             }
 
-            /** @var \stdClass $categoryConfig */
+            /*
+
+            /** @var \stdClass $categoryConfig *
             foreach ($repositoryConfig->categories as $categoryConfig) {
-                /** @var Category $category */
+                /** @var Category $category *
                 $category = (new CategoryFactory())->make([
                     $repository->getId(), null, $categoryConfig->name
                 ]);
@@ -83,15 +92,17 @@ class Initializer
                 }
                 
                 foreach ($categoryConfig->packages as $packageLink) {
-                    $package = (new PackageFactory())->make(array_merge([$category->getId(), null], $this->fetchPackageMeta($packageLink)));
+                    $packageData = array_merge([$category->getId(), null], $this->fetchPackageMeta($packageLink));
+                    //$packageData[] = 'http://repository.aestore.by.loc/download/' .
+                    $package = (new PackageFactory())->make($packageData);
                     $packageStorage->add($package);
                 }
             }
 
+            */
+
             $rank++;
         }
-
-        //print_r($this->persistence);
 
         $response = $next($request, $response);
 
@@ -110,9 +121,12 @@ class Initializer
 
         $release = $this->request('/repos/:owner/:repo/releases/latest', $owner, $repository);
 
-        $file = isset($release['assets'][0]) && $release['assets'][0]['browser_download_url']
-            ? $release['assets'][0]['browser_download_url']
-            : '';
+//        $file = isset($release['assets'][0]) && $release['assets'][0]['browser_download_url']
+//            ? $release['assets'][0]['browser_download_url']
+//            : '';
+
+        // todo: заменить на роутер
+        //$file = 'http://repository.aestore.by.loc/download/' .
 
         $downloads = isset($release['assets'][0]) && $release['assets'][0]['download_count']
             ? $release['assets'][0]['download_count']
@@ -135,7 +149,7 @@ class Initializer
             10000000,
             join(', ', $packageMeta->support->db),
             $downloads,
-            $file
+            ''
         ];
     }
 

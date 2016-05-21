@@ -16,7 +16,8 @@ $container['renderer'] = function ($c) {
 
 // Persistence
 $container['persistence'] = function ($c) {
-    return new InMemoryPersistence();
+    //return new InMemoryPersistence();
+    return new \Alroniks\Repository\RedisPersistence();
 };
 
 // Repository initializer (configuration loader)
