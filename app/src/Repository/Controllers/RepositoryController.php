@@ -79,7 +79,7 @@ class RepositoryController
     public function show(Request $request, Response $response)
     {
         $repositoryId = $request->getAttribute('id');
-        $repository = $this->repositoriesStorage->findById($repositoryId);
+        $repository = $this->repositoriesStorage->find($repositoryId);
 
         if (!$repository) {
             throw new NotFoundException($request, $response);

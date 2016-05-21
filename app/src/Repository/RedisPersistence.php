@@ -48,14 +48,19 @@ class RedisPersistence implements PersistenceInterface
      * @param $key
      * @param $data
      * @param int $ttl
-     * @return mixed
+     * @return boolean
      */
     public function persist($key, $data, $ttl = 0)
     {
-        $this->client->hmset($key, $data);
-        if ($ttl) {
-            $this->client->expire($key, $ttl);
+        if ($this->client->hmset($key, $data)) {
+            if ($ttl) {
+                $this->client->expire($key, $ttl);
+            }
+            
+            return true;
         }
+        
+        return false;
     }
 
     /**

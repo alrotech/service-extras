@@ -50,11 +50,16 @@ abstract class AbstractStorage implements RepositoryInterface
 
     /**
      * @param DomainObjectInterface $object
+     * @return DomainObjectInterface|null
      */
     public function create(DomainObjectInterface $object)
     {
         // todo: configure ttl
-        $this->persistence->persist($this->prefix . $object->getId(), $object->__toArray(), 300);
+        if ($this->persistence->persist($this->prefix . $object->getId(), $object->__toArray(), 300)) {
+            return $object;
+        }
+
+        return null;
     }
 
     /**
