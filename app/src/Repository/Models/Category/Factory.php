@@ -17,14 +17,14 @@ class Factory implements FactoryInterface
     public function make($components)
     {
         // generate unique identifier
-        if (!$components[1]) {
-            $components[1] = substr(md5(md5($components[2] . $components[0])), 0, 10);
+        if (!$components['id']) {
+            $components['id'] = Category::ID($components['repositoryId'] . $components['name']);
         }
 
         return new Category(
-            (integer)$components[0],
-            (string)$components[1],
-            (string)$components[2]
+            (string)$components['repositoryId'],
+            (string)$components['id'],
+            (string)$components['name']
         );
     }
 }

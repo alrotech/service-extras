@@ -60,47 +60,46 @@ class Initializer
             }
             
             $repositoryId = Repository::ID($repositoryConfig->name);
-            if (!$repositoryStorage->exists($repositoryId)) {
-                /** @var Repository $repository */
-                $repository = (new RepositoryFactory())->make([
+            /** @var Repository $repository */
+            if (!$repository = $repositoryStorage->find($repositoryId)) {
+                $repository = $repositoryStorage->create((new RepositoryFactory())->make([
                     'id' => $repositoryId,
                     'name' => $repositoryConfig->name,
                     'description' => $repositoryConfig->description,
                     'createdon' => 'now',
                     'rank' => $rank,
                     'templated' => $repositoryConfig->templated
-                ]);
-                $repositoryStorage->create($repository);
+                ]));
             }
 
             if (!isset($repositoryConfig->categories)) {
                 continue;
             }
-
-            /*
-
-            /** @var \stdClass $categoryConfig *
+            
+            /** @var \stdClass $categoryConfig */
             foreach ($repositoryConfig->categories as $categoryConfig) {
-                /** @var Category $category *
-                $category = (new CategoryFactory())->make([
-                    $repository->getId(), null, $categoryConfig->name
-                ]);
-                $categoryStorage->add($category);
-                
+                $categoryId = Category::ID($categoryConfig->name);
+                /** @var Category $category */
+                if (!$category = $categoryStorage->find($categoryId)) {
+                    $category = $categoryStorage->create((new CategoryFactory())->make([
+                        'repositoryId' => $repository->getId(), 
+                        'id' => $categoryId, 
+                        'name' => $categoryConfig->name
+                    ]));    
+                }
+
                 if (!isset($categoryConfig->packages)) {
                     continue;
                 }
-                
+                /*                
                 foreach ($categoryConfig->packages as $packageLink) {
                     $packageData = array_merge([$category->getId(), null], $this->fetchPackageMeta($packageLink));
                     //$packageData[] = 'http://repository.aestore.by.loc/download/' .
                     $package = (new PackageFactory())->make($packageData);
                     $packageStorage->add($package);
-                }
+                } 
+                */
             }
-
-            */
-
             $rank++;
         }
 

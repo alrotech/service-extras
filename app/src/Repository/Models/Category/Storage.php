@@ -10,17 +10,7 @@ use Alroniks\Repository\Models\AbstractStorage;
  */
 class Storage extends AbstractStorage
 {
-    /**
-     * @param Category $category
-     */
-    public function add(Category $category)
-    {
-        $this->persistence->persist($this->prefix . $category->getId(), [
-            $category->getRepositoryId(),
-            $category->getId(),
-            $category->getName()
-        ]);
-    }
+    protected $prefix = 'category:';
 
     /**
      * @param $repositoryId
@@ -28,7 +18,7 @@ class Storage extends AbstractStorage
      */
     public function findByRepositoryId($repositoryId)
     {
-        return array_filter($this->findAll(), function ($category) use ($repositoryId) {
+        return array_filter($this->all(), function ($category) use ($repositoryId) {
             /** @var Category $category */
             return $category->getRepositoryId() == $repositoryId;
         });
