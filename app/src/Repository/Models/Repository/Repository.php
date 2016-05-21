@@ -3,7 +3,7 @@
 namespace Alroniks\Repository\Models\Repository;
 
 use Alroniks\Repository\Contracts\DomainObjectInterface;
-use DateTime;
+use DateTimeImmutable;
 
 /**
  * Class Repository
@@ -32,7 +32,7 @@ final class Repository implements DomainObjectInterface
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
-        $this->createdon = $createdon instanceof DateTime ? $createdon : new DateTime($createdon);
+        $this->createdon = $createdon instanceof DateTimeImmutable ? $createdon : new DateTimeImmutable($createdon);
         $this->rank = $rank;
         $this->templated = $templated;
     }
@@ -71,7 +71,7 @@ final class Repository implements DomainObjectInterface
     }
 
     /**
-     * @return DateTime
+     * @return DateTimeImmutable
      */
     public function getCreatedOn()
     {
@@ -108,8 +108,8 @@ final class Repository implements DomainObjectInterface
 
         foreach ($array as $key => &$value) {
             $value = call_user_func([$this, 'get' . lcfirst($key)]);
-            if ($value instanceof DateTime) {
-                $value = $value->format(DateTime::ISO8601);
+            if ($value instanceof DateTimeImmutable) {
+                $value = $value->format(DateTimeImmutable::ISO8601);
             }
         }
 

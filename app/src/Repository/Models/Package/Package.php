@@ -2,9 +2,7 @@
 
 namespace Alroniks\Repository\Models\Package;
 
-use DateTime;
-
-// todo: replace datetime to datetimeimmutable
+use DateTimeImmutable;
 
 /**
  * Class Package
@@ -98,9 +96,9 @@ final class Package
         $this->description = $description;
         $this->instructions = $instructions;
         $this->changelog = $changelog;
-        $this->createdon = $createdon instanceof DateTime ? $createdon : new DateTime($createdon);
-        $this->editedon = $editedon instanceof DateTime ? $editedon : new DateTime($editedon);
-        $this->releasedon = $releasedon instanceof DateTime ? $releasedon : new DateTime($releasedon);
+        $this->createdon = $createdon instanceof DateTimeImmutable ? $createdon : new DateTimeImmutable($createdon);
+        $this->editedon = $editedon instanceof DateTimeImmutable ? $editedon : new DateTimeImmutable($editedon);
+        $this->releasedon = $releasedon instanceof DateTimeImmutable ? $releasedon : new DateTimeImmutable($releasedon);
         $this->cover = $cover;
         $this->thumb = $thumb;
         $this->minimum = $minimum;
@@ -183,7 +181,7 @@ final class Package
     }
 
     /**
-     * @return \DateTime
+     * @return DateTimeImmutable
      */
     public function getCreatedon()
     {
@@ -191,7 +189,7 @@ final class Package
     }
 
     /**
-     * @return \DateTime
+     * @return DateTimeImmutable
      */
     public function getEditedon()
     {
@@ -199,7 +197,7 @@ final class Package
     }
 
     /**
-     * @return \DateTime
+     * @return DateTimeImmutable
      */
     public function getReleasedon()
     {
