@@ -6,6 +6,7 @@ use Alroniks\Repository\Contracts\PersistenceInterface;
 use Alroniks\Repository\Models\Category\Category;
 use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
+use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
 use Alroniks\Repository\Models\Repository\Repository;
 use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
@@ -78,7 +79,7 @@ class Initializer
             
             /** @var \stdClass $categoryConfig */
             foreach ($repositoryConfig->categories as $categoryConfig) {
-                $categoryId = Category::ID($categoryConfig->name);
+                $categoryId = Category::ID($repositoryId . $categoryConfig->name);
                 /** @var Category $category */
                 if (!$category = $categoryStorage->find($categoryId)) {
                     $category = $categoryStorage->create((new CategoryFactory())->make([
@@ -91,14 +92,35 @@ class Initializer
                 if (!isset($categoryConfig->packages)) {
                     continue;
                 }
-                /*                
+
                 foreach ($categoryConfig->packages as $packageLink) {
-                    $packageData = array_merge([$category->getId(), null], $this->fetchPackageMeta($packageLink));
-                    //$packageData[] = 'http://repository.aestore.by.loc/download/' .
-                    $package = (new PackageFactory())->make($packageData);
-                    $packageStorage->add($package);
-                } 
-                */
+                    $packageId = Package::ID($categoryId . $packageLink);
+                    if (!$package = $packageStorage->find($packageId)) {
+                        $meta = $this->fetchPackageMeta($packageLink);
+                        $package = $packageStorage->create((new PackageFactory())->make([
+                            'categoryId' => $categoryId,
+                            'id' => $packageId,
+                            'name' => $meta['name'],
+                            'version' => $meta['version'],
+                            'author' => $meta['author'],
+                            'license' => $meta['license'],
+                            'description' => $meta['description'],
+                            'instructions' => $meta['instructions'],
+                            'changelog' => $meta['changelog'],
+                            'createdon' => $meta['createdon'],
+                            'editedon' => $meta['editedon'],
+                            'releasedon' => $meta['releasedon'],
+                            'cover' => $meta['cover'],
+                            'thumb' => $meta['thumb'],
+                            'minimum' => $meta['minimum'],
+                            'maximum' => $meta['maximum'],
+                            'databases' => $meta['databases'],
+                            'downloads' => $meta['downloads'],
+                            'package' => $meta['file'],
+                            'github' => $packageLink
+                        ]));
+                    }
+                }
             }
             $rank++;
         }
@@ -125,30 +147,30 @@ class Initializer
 //            : '';
 
         // todo: заменить на роутер
-        //$file = 'http://repository.aestore.by.loc/download/' .
+        $file = 'http://repository.aestore.by.loc/download/';
 
         $downloads = isset($release['assets'][0]) && $release['assets'][0]['download_count']
             ? $release['assets'][0]['download_count']
             : 0;
 
         return [
-            $packageMeta->name,
-            $release['tag_name'],
-            $packageMeta->author,
-            $packageMeta->license,
-            $packageMeta->description,
-            file_get_contents($instructions['download_url']),
-            file_get_contents($changeLog['download_url']),
-            $release['created_at'],
-            $release['created_at'],
-            $release['published_at'],
-            $packageMeta->screenshot,
-            $packageMeta->thumbnail,
-            $packageMeta->support->modx,
-            10000000,
-            join(', ', $packageMeta->support->db),
-            $downloads,
-            ''
+            'name' => $packageMeta->name,
+            'version' => $release['tag_name'],
+            'author' => $packageMeta->author,
+            'license' => $packageMeta->license,
+            'description' => $packageMeta->description,
+            'instructions' => file_get_contents($instructions['download_url']),
+            'changelog' => file_get_contents($changeLog['download_url']),
+            'createdon' => $release['created_at'],
+            'editedon' => $release['created_at'],
+            'releasedon' => $release['published_at'],
+            'cover' => $packageMeta->screenshot,
+            'thumb' => $packageMeta->thumbnail,
+            'minimum' => $packageMeta->support->modx,
+            'maximum' => 10000000,
+            'databases' => join(', ', $packageMeta->support->db),
+            'downloads' => $downloads,
+            'file' => ''
         ];
     }
 
