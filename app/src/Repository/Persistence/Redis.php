@@ -1,15 +1,15 @@
 <?php
 
-namespace Alroniks\Repository;
+namespace Alroniks\Repository\Persistence;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
 use Predis\Client;
 
 /**
- * Class RedisPersistence
- * @package Alroniks\Repository
+ * Class Redis
+ * @package Alroniks\Repository\Persistence
  */
-class RedisPersistence implements PersistenceInterface
+class Redis implements PersistenceInterface
 {
     /** @var Client */
     private $client = null;
