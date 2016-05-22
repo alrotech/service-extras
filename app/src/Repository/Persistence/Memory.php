@@ -6,7 +6,11 @@ namespace Alroniks\Repository;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
 
-class InMemoryPersistence implements PersistenceInterface
+/**
+ * Class Memory
+ * @package Alroniks\Repository
+ */
+class Memory implements PersistenceInterface
 {
     /** @var array */
     private $data = [];
@@ -14,11 +18,17 @@ class InMemoryPersistence implements PersistenceInterface
     /**
      * @param $key
      * @param $data
+     * @param int $ttl
      * @return mixed|void
      */
-    public function persist($key, $data)
+    public function persist($key, $data, $ttl = 0)
     {
         $this->data[$key] = $data;
+    }
+    
+    public function purge($key)
+    {
+        // TODO: Implement purge() method.
     }
 
     /**
@@ -33,11 +43,12 @@ class InMemoryPersistence implements PersistenceInterface
     }
 
     /**
+     * @param $key
      * @return array
      */
-    public function retrieveAll()
+    public function collection($key)
     {
         return $this->data;
     }
-
+    
 }
