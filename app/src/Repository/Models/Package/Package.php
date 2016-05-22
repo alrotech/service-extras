@@ -2,13 +2,15 @@
 
 namespace Alroniks\Repository\Models\Package;
 
+use Alroniks\Repository\Contracts\DomainObjectInterface;
+use DateTime;
 use DateTimeImmutable;
 
 /**
  * Class Package
  * @package Alroniks\Repository\Models\Package
  */
-final class Package
+final class Package implements DomainObjectInterface
 {
     private $id;
     private $name;
@@ -43,6 +45,9 @@ final class Package
     private $package;
 
     private $categoryId;
+    
+    // link to repository on github
+    private $github;
 
     /**
      * Package constructor.
@@ -64,7 +69,8 @@ final class Package
      * @param $maximum
      * @param $databases    
      * @param $downloads
-     * @param $package
+     * @param $package      
+     * @param $github
      */
     public function __construct(
         $categoryId,
@@ -85,7 +91,8 @@ final class Package
         $maximum,
         $databases,
         $downloads,
-        $package
+        $package,
+        $github
     ) {
         $this->categoryId = $categoryId;
         $this->id = $id;
@@ -106,6 +113,16 @@ final class Package
         $this->databases = $databases;
         $this->downloads = $downloads;
         $this->package = $package;
+        $this->github = $github;
+    }
+
+    /**
+     * @param $uniqueString
+     * @return string
+     */
+    public static function ID($uniqueString)
+    {
+        return substr(md5(md5($uniqueString)), 0, 10);
     }
 
     /**
@@ -260,4 +277,25 @@ final class Package
         return $this->package;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getGitHub()
+    {
+        return $this->github;
+    }
+
+    public function __toArray()
+    {
+        $array = get_class_vars(__CLASS__);
+
+        foreach ($array as $key => &$value) {
+            $value = call_user_func([$this, 'get' . lcfirst($key)]);
+            if ($value instanceof DateTimeImmutable) {
+                $value = $value->format(DateTime::ISO8601);
+            }
+        }
+
+        return $array;
+    }
 }

@@ -3,7 +3,6 @@
 namespace Alroniks\Repository\Models\Package;
 
 use Alroniks\Repository\Contracts\FactoryInterface;
-use DateTime;
 
 /**
  * Class Factory
@@ -18,44 +17,47 @@ class Factory implements FactoryInterface
     public function make($components)
     {
         // generate unique identifier
-        if (!$components[1]) {
-            $components[1] = substr(md5(md5($components[0] . $components[2] . $components[3] . 'pl')), 0, 10);
+        if (!$components['id']) {
+            $components['id'] = Package::ID($components['categoryId'] . $components['github']);
         }
 
         return new Package(
-            (string)$components[0],
+            (string)$components['categoryId'],
 
-            (string)$components[1],
-            (string)$components[2],
-            (string)$components[3],
+            (string)$components['id'],
+            (string)$components['name'],
+            (string)$components['version'],
         
             // author and licence
-            (string)$components[4],
-            (string)$components[5],
+            (string)$components['author'],
+            (string)$components['license'],
 
             // full text materials
-            (string)$components[6],
-            (string)$components[7],
-            (string)$components[8],
+            (string)$components['description'],
+            (string)$components['instructions'],
+            (string)$components['changelog'],
         
             // dates
-            $components[9],
-            $components[10],
-            $components[11],
+            $components['createdon'],
+            $components['editedon'],
+            $components['releasedon'],
         
             // images (covers)
-            (string)$components[12],
-            (string)$components[13],
+            (string)$components['cover'],
+            (string)$components['thumb'],
 
             // support
-            (string)$components[14],
-            (string)$components[15],
-            (string)$components[16],
+            (string)$components['minimum'],
+            (string)$components['maximum'],
+            (string)$components['databases'],
 
-            (integer)$components[17],
+            (integer)$components['downloads'],
         
             // package
-            (string)$components[18]
+            (string)$components['package'],
+
+            // link to repository on github  
+            (string)$components['github']
         );
     }
 }

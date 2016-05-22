@@ -3,9 +3,10 @@
 namespace Alroniks\Repository\Controllers;
 
 use Alroniks\Repository\Contracts\PersistenceInterface;
+use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
+use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Package\Factory;
-use Alroniks\Repository\Models\Package\Package;
-use Alroniks\Repository\Models\Package\Storage;
+use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Alroniks\Repository\Models\Package\Transformer;
 use alroniks\repository\Renderer;
 use Slim\Http\Request;
@@ -20,8 +21,11 @@ class PackageController
     /** @var Renderer  */
     private $renderer;
 
-    /** @var Storage */
-    private $storage;
+    /** @var PackageStorage */
+    private $packageStorage;
+
+    /** @var CategoryStorage  */
+    private $categoryStorage;
 
     /**
      * Package constructor.
@@ -31,7 +35,8 @@ class PackageController
     public function __construct(Renderer $renderer, PersistenceInterface $persistence)
     {
         $this->renderer = $renderer;
-        $this->storage = new Storage($persistence, new Factory());
+        $this->packageStorage = new PackageStorage($persistence, new Factory());
+        $this->categoryStorage = new CategoryStorage($persistence, new CategoryFactory());
     }
 
     public function search(Request $request, Response $response)
@@ -46,7 +51,14 @@ class PackageController
         'supportsSeparator' => ', ',
          */
 
-        $packages = $this->storage->findAll();
+        // filtering by tag
+        if ($request->getParam('tag')) {
+            // todo: replace by universal findBy
+            
+            $packages = $this->packageStorage->findByCategory($request->getParam('tag'));
+        } else {
+            $packages = $this->packageStorage->all();
+        }
 
         foreach ($packages as &$package) {
             $package = Transformer::transform($package);

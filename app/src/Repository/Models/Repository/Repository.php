@@ -3,6 +3,7 @@
 namespace Alroniks\Repository\Models\Repository;
 
 use Alroniks\Repository\Contracts\DomainObjectInterface;
+use DateTime;
 use DateTimeImmutable;
 
 /**
@@ -109,7 +110,7 @@ final class Repository implements DomainObjectInterface
         foreach ($array as $key => &$value) {
             $value = call_user_func([$this, 'get' . lcfirst($key)]);
             if ($value instanceof DateTimeImmutable) {
-                $value = $value->format(DateTimeImmutable::ISO8601);
+                $value = $value->format(DateTime::ISO8601);
             }
         }
 
