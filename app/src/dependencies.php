@@ -34,5 +34,5 @@ $container[RepositoryController::class] = function ($c) {
 };
 
 $container[PackageController::class] = function ($c) {
-    return new PackageController($c['renderer'], $c['persistence']);
+    return new PackageController($c['router'], $c['renderer'], $c['persistence']);
 };

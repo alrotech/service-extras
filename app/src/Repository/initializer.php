@@ -108,7 +108,7 @@ class Initializer
                             ->pathFor('package-download', ['id' => $packageId]);
 
                         $package = $packageStorage->create((new PackageFactory())->make([
-                            'categoryId' => $categoryId,
+                            'categoryId' => $categoryId, // rename to category
                             'id' => $packageId,
                             'name' => $meta['name'],
                             'version' => $meta['version'],
@@ -126,8 +126,8 @@ class Initializer
                             'maximum' => $meta['maximum'],
                             'databases' => $meta['databases'],
                             'downloads' => $meta['downloads'],
-                            'package' => $downloadLink,
-                            'github' => $packageLink
+                            'package' => $downloadLink, // rename to download
+                            'github' => $meta['asset'] // rename to storage
                         ]));
                     }
                 }
@@ -144,13 +144,17 @@ class Initializer
     {
         list($owner, $repository) = explode('/', strtolower(str_replace('https://github.com/', '', $url)));
 
-        $package = $this->request('/repos/:owner/:repo/contents/transport.json', $owner, $repository);
+        $package = GitHubGateWay::api('/repos/:owner/:repo/contents/transport.json', $owner, $repository);
         $packageMeta = json_decode(file_get_contents($package['download_url']));
 
-        $instructions = $this->request('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
-        $changeLog = $this->request('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
+        $instructions = GitHubGateWay::api('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
+        $changeLog = GitHubGateWay::api('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
 
-        $release = $this->request('/repos/:owner/:repo/releases/latest', $owner, $repository);
+        $release = GitHubGateWay::api('/repos/:owner/:repo/releases/latest', $owner, $repository);
+
+        $asset = isset($release['assets'][0]) && $release['assets'][0]['url']
+            ? $release['assets'][0]['url']
+            : '';
 
         $downloads = isset($release['assets'][0]) && $release['assets'][0]['download_count']
             ? $release['assets'][0]['download_count']
@@ -173,29 +177,7 @@ class Initializer
             'maximum' => 10000000,
             'databases' => join(', ', $packageMeta->support->db),
             'downloads' => $downloads,
-            'file' => ''
+            'asset' => $asset
         ];
-    }
-
-    private function request($url, $owner, $repository)
-    {
-        $baseUrl = 'https://api.github.com';
-        $secret = trim(file_get_contents("config/$owner.key"));
-
-        $url = str_replace([':owner', ':repo'], [$owner, $repository], $url);
-
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => strpos($url, 'http') !== false ? $url : $baseUrl . $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'Alroniks Package Store',
-            CURLOPT_HEADER => false,
-            CURLOPT_USERPWD => join(':', [$owner, $secret])
-        ]);
-
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-        return json_decode($result, true);
     }
 }
