@@ -9,6 +9,7 @@ use Alroniks\Repository\Models\Package\Factory;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Alroniks\Repository\Models\Package\Transformer;
 use alroniks\repository\Renderer;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -39,23 +40,25 @@ class PackageController
         $this->categoryStorage = new CategoryStorage($persistence, new CategoryFactory());
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return static
+     */
     public function search(Request $request, Response $response)
     {
-        /*
-        'query' => false,
-        'tag' => false,
-        'sorter' => false,
-        'start' => 0,
-        'limit' => 10,
-        'dateFormat' => '%b %d, %Y',
-        'supportsSeparator' => ', ',
-         */
+        $query = $request->getParam('query', false);
+        $tag = $request->getParam('tag', false);
+        $sorter = $request->getParam('sorter', false);
+
+        $start = $request->getParam('start', 0);
+        $limit = $request->getParam('limit', 10);
 
         // filtering by tag
-        if ($request->getParam('tag')) {
+        if ($tag) {
             // todo: replace by universal findBy
             
-            $packages = $this->packageStorage->findByCategory($request->getParam('tag'));
+            $packages = $this->packageStorage->findByCategory($tag);
         } else {
             $packages = $this->packageStorage->all();
         }
@@ -78,5 +81,25 @@ class PackageController
         ]);
 
         return $response->withStatus(200);
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @throws NotFoundException
+     */
+    public function download(Request $request, Response $response)
+    {
+        $packageId = $request->getAttribute('id');
+
+        $package = $this->packageStorage->find($packageId);
+
+        if (!$package) {
+            throw new NotFoundException($request, $response);
+        }
+
+        //
+
+        echo 1;
     }
 }

@@ -21,18 +21,18 @@ $container['persistence'] = function ($c) {
 
 // Repository initializer (configuration loader)
 $container['initializer'] = function ($c) {
-    return new Initializer($c['persistence'], 'config/repository.json');
+    return new Initializer($c['router'], $c['persistence'], 'config/repository.json');
 };
 
 // Controllers
-$container['HomeController'] = function ($c) {
-    return new HomeController($c['renderer']);
+$container[HomeController::class] = function ($c) {
+    return new HomeController($c['renderer'], $c['persistence']);
 };
 
-$container['RepositoryController'] = function ($c) {
+$container[RepositoryController::class] = function ($c) {
     return new RepositoryController($c['renderer'], $c['persistence']);
 };
 
-$container['PackageController'] = function ($c) {
+$container[PackageController::class] = function ($c) {
     return new PackageController($c['renderer'], $c['persistence']);
 };

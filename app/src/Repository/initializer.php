@@ -14,6 +14,7 @@ use Alroniks\Repository\Models\Package\Factory as PackageFactory;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Router;
 
 /**
  * Class Initializer
@@ -21,6 +22,9 @@ use Slim\Http\Response;
  */
 class Initializer
 {
+    /** @var Router */
+    private $router;
+
     /** @var PersistenceInterface */
     private $persistence;
 
@@ -31,8 +35,9 @@ class Initializer
      * @param PersistenceInterface $persistence
      * @param $config
      */
-    public function __construct(PersistenceInterface $persistence, $config)
+    public function __construct(Router $router, PersistenceInterface $persistence, $config)
     {
+        $this->router = $router;
         $this->persistence = $persistence;
         $this->config = json_decode(file_get_contents($config));
     }
@@ -97,6 +102,11 @@ class Initializer
                     $packageId = Package::ID($categoryId . $packageLink);
                     if (!$package = $packageStorage->find($packageId)) {
                         $meta = $this->fetchPackageMeta($packageLink);
+
+                        $downloadLink = $this->router
+                            ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
+                            ->pathFor('package-download', ['id' => $packageId]);
+
                         $package = $packageStorage->create((new PackageFactory())->make([
                             'categoryId' => $categoryId,
                             'id' => $packageId,
@@ -116,7 +126,7 @@ class Initializer
                             'maximum' => $meta['maximum'],
                             'databases' => $meta['databases'],
                             'downloads' => $meta['downloads'],
-                            'package' => $meta['file'],
+                            'package' => $downloadLink,
                             'github' => $packageLink
                         ]));
                     }
@@ -141,13 +151,6 @@ class Initializer
         $changeLog = $this->request('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
 
         $release = $this->request('/repos/:owner/:repo/releases/latest', $owner, $repository);
-
-//        $file = isset($release['assets'][0]) && $release['assets'][0]['browser_download_url']
-//            ? $release['assets'][0]['browser_download_url']
-//            : '';
-
-        // todo: заменить на роутер
-        $file = 'http://repository.aestore.by.loc/download/';
 
         $downloads = isset($release['assets'][0]) && $release['assets'][0]['download_count']
             ? $release['assets'][0]['download_count']
