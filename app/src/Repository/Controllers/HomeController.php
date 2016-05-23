@@ -2,6 +2,7 @@
 
 namespace Alroniks\Repository\Controllers;
 
+use Alroniks\Repository\Contracts\PersistenceInterface;
 use alroniks\repository\Renderer;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -12,13 +13,15 @@ use Slim\Http\Response;
  */
 class HomeController
 {
+    /** @var Renderer */
     private $renderer;
 
     /**
      * Home constructor.
      * @param Renderer $renderer
+     * @param PersistenceInterface $persistence
      */
-    public function __construct(Renderer $renderer)
+    public function __construct(Renderer $renderer, PersistenceInterface $persistence)
     {
         $this->renderer = $renderer;
     }
