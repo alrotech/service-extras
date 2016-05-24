@@ -18,15 +18,16 @@ class Factory implements FactoryInterface
     {
         // generate unique identifier
         if (!$components['id']) {
-            $components['id'] = Package::ID($components['categoryId'] . $components['github']);
+            $components['id'] = Package::ID($components['category'] . $components['storage']);
         }
 
         return new Package(
-            (string)$components['categoryId'],
+            (string)$components['category'],
 
             (string)$components['id'],
             (string)$components['name'],
             (string)$components['version'],
+            (string)$components['signature'],
         
             // author and licence
             (string)$components['author'],
@@ -53,11 +54,14 @@ class Factory implements FactoryInterface
 
             (integer)$components['downloads'],
         
-            // package
-            (string)$components['package'],
+            // assets file
+            (string)$components['storage'],
+
+            // download link
+            (string)$components['location'],
 
             // link to repository on github  
-            (string)$components['github']
+            (string)$components['githublink']
         );
     }
 }

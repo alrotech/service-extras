@@ -16,15 +16,13 @@ class Transformer
      */
     public static function transform(Package $package)
     {
-        $signature = join('-', [$package->getName(), $package->getVersion(), 'pl']);
-
         return [
             'id' => $package->getId(),
             'name' => $package->getName(),
             'version' => $package->getVersion(),
             'release' => 'pl',
-            'display_name' => $signature,
-            'signature' => $signature,
+            'display_name' => $package->getSignature(),
+            'signature' => $package->getSignature(),
             'author' => $package->getAuthor(),
             'license' => $package->getLicense(),
             'description' => ['@cdata' => $package->getDescription()],
@@ -39,7 +37,7 @@ class Transformer
             'breaks_at' => $package->getMaximum() ?: 1000000,
             'supports_db' => $package->getDatabases(),
             'downloads' => $package->getDownloads(),
-            'location' => $package->getPackage()
+            'location' => $package->getLocation()
         ];
     }
 }

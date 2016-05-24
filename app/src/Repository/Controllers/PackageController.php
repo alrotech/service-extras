@@ -61,6 +61,8 @@ class PackageController
         // search package by signature!!!
         $signature = $request->getParam('signature', '');
         // getting info about package
+        //$package = $this->packageStorage->findBy('signature', $signature);
+
 
         $query = $request->getParam('query', false);
         $tag = $request->getParam('tag', false);
@@ -115,12 +117,12 @@ class PackageController
             throw new NotFoundException($request, $response);
         }
 
-        $asset = $package->getGitHub();
+        $ghLink = $package->getGitHubLink();
 
         list($owner, $repository) = explode('/',
-            strtolower(str_replace(GitHubGateWay::BASE_URL . '/repos/', '', $asset)));
+            strtolower(str_replace('https://github.com/', '', $ghLink)));
 
-        $result = GitHubGateWay::api($asset, $owner, $repository, [
+        $result = GitHubGateWay::api($package->getStorage(), $owner, $repository, [
             CURLOPT_HTTPHEADER => ['Accept: application/octet-stream'],
             CURLOPT_FOLLOWLOCATION => true
         ]);
