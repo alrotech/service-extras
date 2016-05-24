@@ -30,25 +30,21 @@ class GitHubGateWay
         $url = str_replace([':owner', ':repo'], [$owner, $repository], $url);
         $url = strpos($url, 'http') !== false ? $url : self::BASE_URL . $url;
 
-        $config = [
+        $ch = curl_init();
+        curl_setopt_array($ch, array_replace([
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT => 'Alroniks Package Store',
             CURLOPT_HEADER => false,
             CURLOPT_USERPWD => join(':', [$owner, $secret])
-        ];
+        ], $options));
 
-        if ($options) {
-            $config = array_replace($config, $options);
-        }
-
-        $ch = curl_init();
-        curl_setopt_array($ch, $config);
         $result = curl_exec($ch);
+        $info = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         curl_close($ch);
-        
-        if (strpos($result, "\0") !== false) {
-            return $result;
+
+        if (false !== strpos($info, 'amazonaws.com')) {
+            return $info;
         }
 
         return json_decode($result, true);
