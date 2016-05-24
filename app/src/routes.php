@@ -31,5 +31,5 @@ $app->get('/package/download/{id:[0-9a-z]+}', [$container[PackageController::cla
     ->setName('package-download');
 
 
-$app->get('/package/file/{id:[0-9a-z]+}', [$container[PackageController::class], 'file'])
-    ->setName('package-file');
+$app->get('/package/direct/{link}', [$container[PackageController::class], 'direct'])
+    ->setName('package-direct-link');

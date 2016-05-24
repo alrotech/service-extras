@@ -11,6 +11,7 @@ use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Alroniks\Repository\Models\Package\Transformer;
 use alroniks\repository\Renderer;
+use Predis\Command\StringAppend;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -57,6 +58,10 @@ class PackageController
      */
     public function search(Request $request, Response $response)
     {
+        // search package by signature!!!
+        $signature = $request->getParam('signature', '');
+        // getting info about package
+
         $query = $request->getParam('query', false);
         $tag = $request->getParam('tag', false);
         $sorter = $request->getParam('sorter', false);
@@ -119,18 +124,12 @@ class PackageController
             CURLOPT_HTTPHEADER => ['Accept: application/octet-stream'],
             CURLOPT_FOLLOWLOCATION => true
         ]);
-
-        // $result - binary data of zip
-        $filename = md5($result);
-        $filepath = 'cache/' . $filename;
-
-        if (!file_exists($filepath)) {
-            file_put_contents($filepath, $result);
-        }
-
+        
+        $encodedLink = base64_encode($result);
+        
         return $this->router
             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
-            ->pathFor('package-file', ['id' => $filename]);
+            ->pathFor('package-direct-link', ['link' => $encodedLink]);
     }
 
     /**
@@ -139,18 +138,13 @@ class PackageController
      * @return static
      * @throws NotFoundException
      */
-    public function file(Request $request, Response $response)
+    public function direct(Request $request, Response $response)
     {
-        // доступ к пакету и тд будет проверять через middleware всегда?
-        $filename = $request->getAttribute('id');
-        $filepath = 'cache/' . $filename;
-
-        if (!file_exists($filepath) || !is_readable($filepath)) {
-            throw new NotFoundException($request, $response);
-        }
+        $link = $request->getAttribute('link');
+        $decodedLink = base64_decode($link);
 
         return $response
             ->withHeader('Content-type', 'application/zip')
-            ->withBody(new Stream(fopen($filepath, 'rb')));
+            ->withBody(new Stream(fopen($decodedLink, 'rb')));
     }
 }
