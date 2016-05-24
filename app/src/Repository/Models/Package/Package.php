@@ -12,9 +12,12 @@ use DateTimeImmutable;
  */
 final class Package implements DomainObjectInterface
 {
+    private $category;
+
     private $id;
     private $name;
     private $version;
+    private $signature;
 
     // author and licence
     private $author;
@@ -38,23 +41,26 @@ final class Package implements DomainObjectInterface
     private $minimum;
     private $maximum;
     private $databases;
-    
+
+    // count of downloads
     private $downloads;
 
-    // path to file
-    private $package;
+    // path to file in github assets
+    private $storage;
 
-    private $categoryId;
-    
+    // link to downloading package
+    private $location;
+
     // link to repository on github
-    private $github;
+    private $githublink;
 
     /**
      * Package constructor.
-     * @param $categoryId
+     * @param $category
      * @param $id
      * @param $name
      * @param $version
+     * @param $signature
      * @param $author
      * @param $license
      * @param $description
@@ -69,14 +75,16 @@ final class Package implements DomainObjectInterface
      * @param $maximum
      * @param $databases    
      * @param $downloads
-     * @param $package      
-     * @param $github
+     * @param $storage
+     * @param $location
+     * @param $githublink
      */
     public function __construct(
-        $categoryId,
+        $category,
         $id,
         $name,
         $version,
+        $signature,
         $author,
         $license,
         $description,
@@ -91,13 +99,15 @@ final class Package implements DomainObjectInterface
         $maximum,
         $databases,
         $downloads,
-        $package,
-        $github
+        $storage,
+        $location,
+        $githublink
     ) {
-        $this->categoryId = $categoryId;
+        $this->category = $category;
         $this->id = $id;
         $this->name = $name;
         $this->version = $version;
+        $this->signature = $signature;
         $this->author = $author;
         $this->license = $license;
         $this->description = $description;
@@ -112,8 +122,9 @@ final class Package implements DomainObjectInterface
         $this->maximum = $maximum;
         $this->databases = $databases;
         $this->downloads = $downloads;
-        $this->package = $package;
-        $this->github = $github;
+        $this->storage = $storage;
+        $this->location = $location;
+        $this->githublink = $githublink;
     }
 
     /**
@@ -128,9 +139,9 @@ final class Package implements DomainObjectInterface
     /**
      * @return mixed
      */
-    public function getCategoryId()
+    public function getCategory()
     {
-        return $this->categoryId;
+        return $this->category;
     }
 
     /**
@@ -155,6 +166,14 @@ final class Package implements DomainObjectInterface
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSignature()
+    {
+        return $this->signature;
     }
 
     /**
@@ -272,17 +291,25 @@ final class Package implements DomainObjectInterface
     /**
      * @return mixed
      */
-    public function getPackage()
+    public function getStorage()
     {
-        return $this->package;
+        return $this->storage;
     }
 
     /**
      * @return mixed
      */
-    public function getGitHub()
+    public function getLocation()
     {
-        return $this->github;
+        return $this->location;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGitHubLink()
+    {
+        return $this->githublink;
     }
 
     public function __toArray()

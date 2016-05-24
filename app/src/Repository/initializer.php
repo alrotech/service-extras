@@ -103,15 +103,16 @@ class Initializer
                     if (!$package = $packageStorage->find($packageId)) {
                         $meta = $this->fetchPackageMeta($packageLink);
 
-                        $downloadLink = $this->router
+                        $location = $this->router
                             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
                             ->pathFor('package-download', ['id' => $packageId]);
 
                         $package = $packageStorage->create((new PackageFactory())->make([
-                            'categoryId' => $categoryId, // rename to category
+                            'category' => $categoryId,
                             'id' => $packageId,
                             'name' => $meta['name'],
                             'version' => $meta['version'],
+                            'signature' => join('-', [$meta['name'], $meta['version'], 'pl']),
                             'author' => $meta['author'],
                             'license' => $meta['license'],
                             'description' => $meta['description'],
@@ -126,8 +127,9 @@ class Initializer
                             'maximum' => $meta['maximum'],
                             'databases' => $meta['databases'],
                             'downloads' => $meta['downloads'],
-                            'package' => $downloadLink, // rename to download
-                            'github' => $meta['asset'] // rename to storage
+                            'storage' => $meta['storage'],
+                            'location' => $location,
+                            'githublink' => $packageLink
                         ]));
                     }
                 }
@@ -152,7 +154,7 @@ class Initializer
 
         $release = GitHubGateWay::api('/repos/:owner/:repo/releases/latest', $owner, $repository);
 
-        $asset = isset($release['assets'][0]) && $release['assets'][0]['url']
+        $storage = isset($release['assets'][0]) && $release['assets'][0]['url']
             ? $release['assets'][0]['url']
             : '';
 
@@ -177,7 +179,7 @@ class Initializer
             'maximum' => 10000000,
             'databases' => join(', ', $packageMeta->support->db),
             'downloads' => $downloads,
-            'asset' => $asset
+            'storage' => $storage
         ];
     }
 }
