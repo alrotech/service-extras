@@ -48,10 +48,15 @@ class RepositoryController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     * @throws NotFoundException
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         $repositories = $this->repository->findAll();
+
+        if (!count($repositories)) {
+            throw new NotFoundException($request, $response);
+        }
 
         foreach ($repositories as &$repository) {
             $repository = Transformer::transform($repository);
