@@ -1,15 +1,15 @@
 <?php declare(strict_types = 1);
 
-namespace Alroniks\Repository\Domain\Repository;
+namespace Alroniks\Repository\Domain\Category;
 
 use Alroniks\Repository\Contracts\EntityInterface;
 use Alroniks\Repository\Contracts\TransformerInterface;
 
 /**
  * Class Transformer
- * @package Alroniks\Repository\Domain\Repository
+ * @package Alroniks\Repository\Domain\Category
  */
-class Transformer implements TransformerInterface
+class CategoryTransformer implements TransformerInterface
 {
     /**
      * @param EntityInterface $entity
@@ -17,16 +17,11 @@ class Transformer implements TransformerInterface
      */
     public static function transform(EntityInterface $entity) : array
     {
-        /** @var Repository $entity */
+        /** @var Category $entity */
         $output = $entity->toArray();
 
-        if (isset($output['description'])) {
-            $output['description'] = [
-                '@cdata' => $entity->getDescription()
-            ];
-        }
-
-        $output['packages'] = 19; // todo
+        unset($output['repository']);
+        $output['packages'] = 10; // todo
 
         return $output;
     }

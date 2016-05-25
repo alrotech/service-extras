@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Domain\Category;
 
@@ -11,35 +11,30 @@ use Alroniks\Repository\Contracts\EntityInterface;
 final class Category implements EntityInterface
 {
     private $repository;
+
     private $id;
     private $name;
 
     /**
      * Category constructor.
-     * @param $repository
-     * @param null $id
-     * @param $name
+     * @param string|null $repository
+     * @param string|null $id
+     * @param string $name
      */
-    public function __construct($repository, $id = null, $name)
-    {
-        $this->repository = $repository;
-        $this->id = $id;
+    public function __construct(
+        $repository = null,
+        string $id = null,
+        string $name
+    ) {
+        $this->repository = $repository instanceof EntityInterface ? $repository->getId() : $repository;
+        $this->id = $id ?: substr(md5(md5($this->repository . $name)), 0, 10);
         $this->name = $name;
     }
 
     /**
-     * @param $uniqueString
      * @return string
      */
-    public static function ID($uniqueString)
-    {
-        return substr(md5(md5($uniqueString)), 0, 10);
-    }
-
-    /**
-     * @return null
-     */
-    public function getId()
+    public function getId() : string
     {
         return $this->id;
     }
@@ -61,12 +56,9 @@ final class Category implements EntityInterface
     }
 
     /**
-     * @param $field
-     * @param $value
+     * @return array
      */
-    public function __set($field, $value) {}
-
-    public function __toArray()
+    public function toArray() : array
     {
         $array = get_class_vars(__CLASS__);
 

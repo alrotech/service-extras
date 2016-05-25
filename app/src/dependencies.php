@@ -27,6 +27,11 @@ $container['initializer'] = function ($c) {
 };
 
 // Controllers
+$container[TestController::class] = function ($container) {
+    return new TestController($container);
+};
+
+
 //$container[HomeController::class] = function ($c) {
 //    return new HomeController($c['renderer'], $c['persistence']);
 //};

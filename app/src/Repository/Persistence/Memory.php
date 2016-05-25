@@ -59,18 +59,18 @@ class Memory implements StorageInterface
     }
 
     /**
-     * Delete data specified by key
+     * Delete data specified by id
      * If there is no such data - false returns,
      * if data has been successfully deleted - true returns.
-     * @param string $key
+     * @param string $id
      * @return bool
      */
-    public function delete(string $key) : bool
+    public function delete(string $id) : bool
     {
-        if (isset($this->data[$this->storageKey][$key])) {
-            unset($this->data[$this->storageKey][$key]);
+        if (isset($this->data[$this->storageKey][$id])) {
+            unset($this->data[$this->storageKey][$id]);
 
-            return empty(isset($this->data[$this->storageKey][$key]));
+            return empty(isset($this->data[$this->storageKey][$id]));
         }
 
         return false;

@@ -5,6 +5,8 @@ use Alroniks\Repository\Controllers\PackageController;
 use Alroniks\Repository\Http\Controllers\RepositoryController;
 use Alroniks\Repository\Http\Controllers\TestController;
 
+$app->get('/', [$container[TestController::class], 'test']);
+
 //// verifies credentials and site when adding new package provider through Package Manager
 //$app->get('/verify', [$container[HomeController::class], 'verify'])
 //    ->setName('verify');

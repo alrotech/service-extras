@@ -3,8 +3,12 @@
 namespace Alroniks\Repository\Http\Controllers;
 
 use Alroniks\Repository\Contracts\StorageInterface;
+use Alroniks\Repository\Domain\Category\Categories;
+use Alroniks\Repository\Domain\Category\Category;
+use Alroniks\Repository\Domain\Category\CategoryFactory;
+use Alroniks\Repository\Domain\Category\CategoryTransformer;
 use Alroniks\Repository\Domain\RecordNotFoundException;
-use Alroniks\Repository\Domain\Repository\Factory;
+use Alroniks\Repository\Domain\Repository\RepositoryFactory;
 use Alroniks\Repository\Domain\Repository\Repositories;
 use Alroniks\Repository\Domain\Repository\Repository;
 use Alroniks\Repository\Domain\Repository\Transformer;
@@ -37,7 +41,7 @@ class RepositoryController
         $persistence = $container->get('persistence');
         $persistence->setStorageKey(Repository::class);
         
-        $this->repository = new Repositories($persistence, new Factory());
+        $this->repository = new Repositories($persistence, new RepositoryFactory());
     }
 
     /**
@@ -77,12 +81,6 @@ class RepositoryController
      */
     public function show(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $repository_1 = new Repository(null, 'Repo Test 1', 'D1', '', 0, false);
-        $repository_2 = new Repository(null, 'Repo Test 2', 'D2', '', 0, true);
-
-        $this->repository->add($repository_1);
-        $this->repository->add($repository_2);
-
         $repository = $request->getAttribute('id');
 
         try {
@@ -91,18 +89,22 @@ class RepositoryController
             throw new NotFoundException($request, $response);
         }
 
-        // need to fix
-        //$categories = $this->categoriesStorage->findByRepositoryId($repositoryId);
-        //foreach ($categories as &$category) {
-            //$category = CategoryTransformer::transform($category);
-        //}
+        /** @var StorageInterface $persistence */
+        $persistence = $this->container->get('persistence');
+        $persistence->setStorageKey(Category::class);
+
+        $categories = new Categories($persistence, new CategoryFactory());
+        $categories = $categories->findBy('repository', $repository);
+        
+        foreach ($categories as &$category) {
+            $category = CategoryTransformer::transform($category);
+        }
 
         /** @var ResponseInterface $response */
         $response = $this->container->get('renderer')->render($response, [
             'repository' => array_merge(
                 Transformer::transform($repository),
-                //['tag' => $categories]
-                ['tag' => []]
+                ['tag' => $categories]
             )
         ]);
 
