@@ -2,7 +2,7 @@
 
 namespace Alroniks\Repository\Models\Package;
 
-use Alroniks\Repository\Contracts\DomainObjectInterface;
+use Alroniks\Repository\Contracts\EntityInterface;
 use DateTime;
 use DateTimeImmutable;
 
@@ -10,7 +10,7 @@ use DateTimeImmutable;
  * Class Package
  * @package Alroniks\Repository\Models\Package
  */
-final class Package implements DomainObjectInterface
+final class Package implements EntityInterface
 {
     private $category;
 

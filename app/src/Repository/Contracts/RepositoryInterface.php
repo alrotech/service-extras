@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Contracts;
+
+use Alroniks\Repository\Domain\DomainException;
+use Alroniks\Repository\Domain\RecordNotFoundException;
 
 /**
  * Interface RepositoryInterface
@@ -9,46 +12,48 @@ namespace Alroniks\Repository\Contracts;
 interface RepositoryInterface
 {
     /**
-     * @return mixed
+     * RepositoryInterface constructor.
+     * @param StorageInterface $persistence
+     * @param FactoryInterface $factory
      */
-    public function all();
+    public function __construct(StorageInterface $persistence, FactoryInterface $factory);
+
+    /**
+     * @param EntityInterface $entity
+     * @return mixed
+     * @throws DomainException
+     */
+    public function add(EntityInterface $entity) : EntityInterface;
+    
+    /**
+     * @param EntityInterface $entity
+     * @return bool
+     * @throws DomainException
+     */
+    public function remove(EntityInterface $entity) : bool;
+
+    /**
+     * @param string $id
+     * @return EntityInterface
+     * @throws RecordNotFoundException
+     */
+    public function find(string $id) : EntityInterface;
+
+    /**
+     * @return array
+     */
+    public function findAll() : array;
+
+    /**
+     * @param string $field
+     * @return array
+     */
+    public function findBy(string $field) : array;
 
     /**
      * @param int $perPage
-     * @param array $columns
      * @return mixed
      */
-    //public function paginate($perPage = 10, $columns = ['*']);
+    public function paginate(int $perPage = 10);
 
-    /**
-     * @param DomainObjectInterface $object
-     */
-    public function create(DomainObjectInterface $object);
-
-    /**
-     * @param DomainObjectInterface $object
-     * @param $id
-     * @return mixed
-     */
-    public function update(DomainObjectInterface $object, $id);
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id);
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function find($id);
-
-    /**
-     * @param $field
-     * @param $value
-     * @param array $columns
-     * @return mixed
-     */
-    public function findBy($field, $value, $columns = []);
 }
