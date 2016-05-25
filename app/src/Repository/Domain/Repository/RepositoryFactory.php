@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Domain\Repository;
 
@@ -9,7 +9,7 @@ use Alroniks\Repository\Contracts\FactoryInterface;
  * Repository Factory
  * @package Alroniks\Repository\Domain\Repository
  */
-class Factory implements FactoryInterface
+class RepositoryFactory implements FactoryInterface
 {
     /**
      * @param array $raw

@@ -46,7 +46,7 @@ interface StorageInterface
      * Delete data specified by id
      * If there is no such data - false returns,
      * if data has been successfully deleted - true returns.
-     * @param int $id
+     * @param string $id
      * @return bool
      */
     public function delete(string $id) : bool;

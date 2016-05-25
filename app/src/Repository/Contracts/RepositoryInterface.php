@@ -46,9 +46,10 @@ interface RepositoryInterface
 
     /**
      * @param string $field
+     * @param $value
      * @return array
      */
-    public function findBy(string $field) : array;
+    public function findBy(string $field, $value) : array;
 
     /**
      * @param int $perPage

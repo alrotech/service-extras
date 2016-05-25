@@ -104,9 +104,18 @@ abstract class AbstractRepository implements RepositoryInterface
         return $collection;
     }
 
-    public function findBy(string $field) : array
+    public function findBy(string $field, $value) : array
     {
         return 'Not implemented yet';
+    }
+
+    /**
+     * @param int $perPage
+     * @return mixed
+     */
+    public function paginate(int $perPage = 10)
+    {
+        // TODO: Implement paginate() method.
     }
 
 }

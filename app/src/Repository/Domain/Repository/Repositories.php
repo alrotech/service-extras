@@ -16,12 +16,5 @@ use Alroniks\Repository\AbstractRepository;
  */
 class Repositories extends AbstractRepository 
 {
-    /**
-     * @param int $perPage
-     * @return mixed
-     */
-    public function paginate(int $perPage = 10)
-    {
-        // TODO: Implement paginate() method.
-    }
+
 }

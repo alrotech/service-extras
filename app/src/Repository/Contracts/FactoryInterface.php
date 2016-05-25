@@ -10,8 +10,8 @@ interface FactoryInterface
 {
     /**
      * Creates entity from raw data
-     * @param array $data
+     * @param array $raw
      * @return EntityInterface
      */
-    public function make(array $data) : EntityInterface;
+    public function make(array $raw) : EntityInterface;
 }

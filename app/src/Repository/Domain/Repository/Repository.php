@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types = 1);
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Domain\Repository;
 
@@ -107,5 +105,13 @@ final class Repository implements EntityInterface
         }
 
         return $array;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getId();
     }
 }
