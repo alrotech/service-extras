@@ -2,8 +2,8 @@
 
 namespace Alroniks\Repository\Controllers;
 
-use Alroniks\Repository\Contracts\PersistenceInterface;
-use Alroniks\Repository\GitHubGateWay;
+use Alroniks\Repository\Contracts\StorageInterface;
+use Alroniks\Repository\GitHub;
 use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
 use Alroniks\Repository\Models\Package\Factory;
@@ -11,13 +11,11 @@ use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Alroniks\Repository\Models\Package\Transformer;
 use alroniks\repository\Renderer;
-use Predis\Command\StringAppend;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Stream;
 use Slim\Router;
-
 
 /**
  * Class Package
@@ -41,9 +39,9 @@ class PackageController
      * Package constructor.
      * @param Router $router
      * @param Renderer $renderer
-     * @param PersistenceInterface $persistence
+     * @param StorageInterface $persistence
      */
-    public function __construct(Router $router, Renderer $renderer, PersistenceInterface $persistence)
+    public function __construct(Router $router, Renderer $renderer, StorageInterface $persistence)
     {
         $this->router = $router;
         $this->renderer = $renderer;
@@ -62,6 +60,16 @@ class PackageController
         $signature = $request->getParam('signature', '');
         // getting info about package
         //$package = $this->packageStorage->findBy('signature', $signature);
+
+        // сделать поиск по сигнатуре
+        // отрефакторить стораджи для поиска по любому полю
+        // добавить реализацию пагинации
+        // добавить сортировку, если указана
+
+
+        // потом
+        // добавить middleware для проверки версии MODX и других параметров, чтобы показывать только совместимые пакеты
+        // добавить middleware для проверки авторизации и доступа к определенным пакетам и репозиториям
 
 
         $query = $request->getParam('query', false);
@@ -122,7 +130,7 @@ class PackageController
         list($owner, $repository) = explode('/',
             strtolower(str_replace('https://github.com/', '', $ghLink)));
 
-        $result = GitHubGateWay::api($package->getStorage(), $owner, $repository, [
+        $result = GitHub::api($package->getStorage(), $owner, $repository, [
             CURLOPT_HTTPHEADER => ['Accept: application/octet-stream'],
             CURLOPT_FOLLOWLOCATION => true
         ]);

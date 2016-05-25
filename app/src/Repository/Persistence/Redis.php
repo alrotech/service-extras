@@ -1,15 +1,18 @@
 <?php
 
-namespace Alroniks\Repository\Persistence;
+namespace Alroniks\Repository\Domain\Persistence;
 
-use Alroniks\Repository\Contracts\PersistenceInterface;
+use Alroniks\Repository\Contracts\StorageInterface;
 use Predis\Client;
+
+
+// auto check which key use base on class
 
 /**
  * Class Redis
  * @package Alroniks\Repository\Persistence
  */
-class Redis implements PersistenceInterface
+class Redis implements StorageInterface
 {
     /** @var Client */
     private $client = null;
@@ -50,17 +53,22 @@ class Redis implements PersistenceInterface
      * @param int $ttl
      * @return boolean
      */
-    public function persist($key, $data, $ttl = 0)
+//    public function persist($key, $data, $ttl = 0)
+//    {
+//        if ($this->client->hmset($key, $data)) {
+//            if ($ttl) {
+//                $this->client->expire($key, $ttl);
+//            }
+//
+//            return true;
+//        }
+//
+//        return false;
+//    }
+
+    public function persist($data)
     {
-        if ($this->client->hmset($key, $data)) {
-            if ($ttl) {
-                $this->client->expire($key, $ttl);
-            }
-            
-            return true;
-        }
-        
-        return false;
+        // TODO: Implement persist() method.
     }
 
     /**
@@ -84,5 +92,14 @@ class Redis implements PersistenceInterface
     public function exists($key)
     {
         return $this->client->exists($key);
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function delete($key)
+    {
+        // TODO: Implement delete() method.
     }
 }

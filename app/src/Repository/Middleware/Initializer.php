@@ -2,7 +2,7 @@
 
 namespace Alroniks\Repository;
 
-use Alroniks\Repository\Contracts\PersistenceInterface;
+use Alroniks\Repository\Contracts\StorageInterface;
 use Alroniks\Repository\Models\Category\Category;
 use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
@@ -25,17 +25,17 @@ class Initializer
     /** @var Router */
     private $router;
 
-    /** @var PersistenceInterface */
+    /** @var StorageInterface */
     private $persistence;
 
     private $config;
 
     /**
      * Initializer constructor.
-     * @param PersistenceInterface $persistence
+     * @param StorageInterface $persistence
      * @param $config
      */
-    public function __construct(Router $router, PersistenceInterface $persistence, $config)
+    public function __construct(Router $router, StorageInterface $persistence, $config)
     {
         $this->router = $router;
         $this->persistence = $persistence;
@@ -146,13 +146,13 @@ class Initializer
     {
         list($owner, $repository) = explode('/', strtolower(str_replace('https://github.com/', '', $url)));
 
-        $package = GitHubGateWay::api('/repos/:owner/:repo/contents/transport.json', $owner, $repository);
+        $package = GitHub::api('/repos/:owner/:repo/contents/transport.json', $owner, $repository);
         $packageMeta = json_decode(file_get_contents($package['download_url']));
 
-        $instructions = GitHubGateWay::api('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
-        $changeLog = GitHubGateWay::api('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
+        $instructions = GitHub::api('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
+        $changeLog = GitHub::api('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
 
-        $release = GitHubGateWay::api('/repos/:owner/:repo/releases/latest', $owner, $repository);
+        $release = GitHub::api('/repos/:owner/:repo/releases/latest', $owner, $repository);
 
         $storage = isset($release['assets'][0]) && $release['assets'][0]['url']
             ? $release['assets'][0]['url']

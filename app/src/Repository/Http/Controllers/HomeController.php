@@ -1,9 +1,10 @@
 <?php
 
-namespace Alroniks\Repository\Controllers;
+namespace Alroniks\Repository\Http\Controllers;
 
-use Alroniks\Repository\Contracts\PersistenceInterface;
-use alroniks\repository\Renderer;
+use Alroniks\Repository\Contracts\StorageInterface;
+use Alroniks\Repository\Helpers\Renderer;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -19,9 +20,9 @@ class HomeController
     /**
      * Home constructor.
      * @param Renderer $renderer
-     * @param PersistenceInterface $persistence
+     * @param StorageInterface $persistence
      */
-    public function __construct(Renderer $renderer, PersistenceInterface $persistence)
+    public function __construct(Renderer $renderer, StorageInterface $persistence)
     {
         $this->renderer = $renderer;
     }
@@ -32,7 +33,7 @@ class HomeController
      * @param Response $response
      * @return Response
      */
-    public function verify(Request $request, Response $response)
+    public function verify(ServerRequestInterface $request, Response $response)
     {
         // todo: add full check of user and key and access from site to repository
         /** @var Response $response */

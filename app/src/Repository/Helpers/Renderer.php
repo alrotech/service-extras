@@ -1,6 +1,6 @@
 <?php
 
-namespace Alroniks\Repository;
+namespace Alroniks\Repository\Helpers;
 
 use LSS\Array2XML;
 use Slim\Http\Body;
@@ -8,29 +8,18 @@ use Slim\Http\Response;
 
 /**
  * Class Renderer
- * @package alroniks\repository
+ * @package Alroniks\Repository\Helpers
  */
 class Renderer
 {
-    protected $request;
-
-    /**
-     * Renderer constructor.
-     * @param $request
-     */
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
-
     /**
      * Render output in specified format
      * @param Response $response
      * @param array $data
      * @param string $contentType
-     * @return static
+     * @return Response
      */
-    public function render(Response $response, array $data, $contentType = 'application/xml')
+    public function render(Response $response, array $data, string $contentType = 'application/xml') : Response
     {
         switch ($contentType) {
             case 'application/json':

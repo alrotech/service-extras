@@ -1,30 +1,30 @@
 <?php
 
-namespace Alroniks\Repository\Models\Category;
+namespace Alroniks\Repository\Domain\Category;
 
-use Alroniks\Repository\Contracts\DomainObjectInterface;
+use Alroniks\Repository\Contracts\EntityInterface;
 
 /**
  * Class Category
- * @package Alroniks\Repository\Models\Category
+ * @package Alroniks\Repository\Domain\Category
  */
-final class Category implements DomainObjectInterface
+final class Category implements EntityInterface
 {
+    private $repository;
     private $id;
     private $name;
-    private $repositoryId;
 
     /**
      * Category constructor.
-     * @param $repositoryId
+     * @param $repository
      * @param null $id
      * @param $name
      */
-    public function __construct($repositoryId, $id = null, $name)
+    public function __construct($repository, $id = null, $name)
     {
+        $this->repository = $repository;
         $this->id = $id;
         $this->name = $name;
-        $this->repositoryId = $repositoryId;
     }
 
     /**
@@ -55,9 +55,9 @@ final class Category implements DomainObjectInterface
     /**
      * @return integer
      */
-    public function getRepositoryId()
+    public function getRepository()
     {
-        return $this->repositoryId;
+        return $this->repository;
     }
 
     /**
