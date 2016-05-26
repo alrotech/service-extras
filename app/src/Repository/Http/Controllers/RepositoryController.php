@@ -8,10 +8,10 @@ use Alroniks\Repository\Domain\Category\Category;
 use Alroniks\Repository\Domain\Category\CategoryFactory;
 use Alroniks\Repository\Domain\Category\CategoryTransformer;
 use Alroniks\Repository\Domain\RecordNotFoundException;
-use Alroniks\Repository\Domain\Repository\RepositoryFactory;
 use Alroniks\Repository\Domain\Repository\Repositories;
 use Alroniks\Repository\Domain\Repository\Repository;
-use Alroniks\Repository\Domain\Repository\Transformer;
+use Alroniks\Repository\Domain\Repository\RepositoryFactory;
+use Alroniks\Repository\Domain\Repository\RepositoryTransformer;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -59,7 +59,7 @@ class RepositoryController
         }
 
         foreach ($repositories as &$repository) {
-            $repository = Transformer::transform($repository);
+            $repository = RepositoryTransformer::transform($repository);
         }
 
         /** @var ResponseInterface $response */
@@ -74,6 +74,9 @@ class RepositoryController
                 'repository' => $repositories
             ]
         ]);
+
+        //Paginator classs
+
 
         return $response->withStatus(200);
     }
@@ -108,7 +111,7 @@ class RepositoryController
         /** @var ResponseInterface $response */
         $response = $this->container->get('renderer')->render($response, [
             'repository' => array_merge(
-                Transformer::transform($repository),
+                RepositoryTransformer::transform($repository),
                 ['tag' => $categories]
             )
         ]);

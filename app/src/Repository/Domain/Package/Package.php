@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Domain\Package;
 
@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 /**
  * Class Package
- * @package Alroniks\Repository\Models\Package
+ * @package Alroniks\Repository\Domain\Package
  */
 final class Package implements EntityInterface
 {
@@ -81,7 +81,7 @@ final class Package implements EntityInterface
      */
     public function __construct(
         $category,
-        $id,
+        $id = null,
         $name,
         $version,
         $signature,
@@ -324,5 +324,14 @@ final class Package implements EntityInterface
         }
 
         return $array;
+    }
+
+    /**
+     * Return object as an array, like hash table
+     * @return array
+     */
+    public function toArray() : array
+    {
+        // TODO: Implement toArray() method.
     }
 }

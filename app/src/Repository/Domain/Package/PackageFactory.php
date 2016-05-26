@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Domain\Package;
 
+use Alroniks\Repository\Contracts\EntityInterface;
 use Alroniks\Repository\Contracts\FactoryInterface;
-use Alroniks\Repository\Models\Package\Package;
 
 /**
  * Class PackageFactory
@@ -12,10 +12,10 @@ use Alroniks\Repository\Models\Package\Package;
 class PackageFactory implements FactoryInterface
 {
     /**
-     * @param $components
-     * @return Package
+     * @param array $raw
+     * @return EntityInterface
      */
-    public function make($components)
+    public function make(array $raw) : EntityInterface
     {
         // generate unique identifier
         if (!$components['id']) {

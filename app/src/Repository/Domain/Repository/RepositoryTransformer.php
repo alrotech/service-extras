@@ -6,10 +6,10 @@ use Alroniks\Repository\Contracts\EntityInterface;
 use Alroniks\Repository\Contracts\TransformerInterface;
 
 /**
- * Class Transformer
+ * Class RepositoryTransformer
  * @package Alroniks\Repository\Domain\Repository
  */
-class Transformer implements TransformerInterface
+class RepositoryTransformer implements TransformerInterface
 {
     /**
      * @param EntityInterface $entity

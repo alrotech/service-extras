@@ -110,7 +110,7 @@ final class Repository implements EntityInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString() : string
     {
         return $this->getId();
     }

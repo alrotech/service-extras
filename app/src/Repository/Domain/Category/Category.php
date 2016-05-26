@@ -42,15 +42,15 @@ final class Category implements EntityInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
-     * @return integer
+     * @return string
      */
-    public function getRepository()
+    public function getRepository() : string
     {
         return $this->repository;
     }
@@ -67,5 +67,13 @@ final class Category implements EntityInterface
         }
 
         return $array;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return $this->getId();
     }
 }
