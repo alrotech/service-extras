@@ -3,9 +3,6 @@
 use Alroniks\Repository\Http\Controllers\HomeController;
 use Alroniks\Repository\Http\Controllers\PackageController;
 use Alroniks\Repository\Http\Controllers\RepositoryController;
-use Alroniks\Repository\Http\Controllers\TestController;
-
-$app->get('/', [$container[TestController::class], 'test']); // should be removed
 
 # verifies credentials and site when adding new package provider through Package Manager
 $app->get('/verify', [$container[HomeController::class], 'verify'])
