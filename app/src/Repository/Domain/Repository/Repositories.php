@@ -9,12 +9,13 @@
 namespace Alroniks\Repository\Domain\Repository;
 
 use Alroniks\Repository\AbstractRepository;
+use Alroniks\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class Repositories
  * @package Alroniks\Repository\Domain\Repository
  */
-class Repositories extends AbstractRepository 
+class Repositories extends AbstractRepository implements RepositoryInterface
 {
 
 }

@@ -8,11 +8,14 @@ use Alroniks\Repository\Domain\Category\Category;
 use Alroniks\Repository\Domain\Category\Categories; // repository
 use Alroniks\Repository\Domain\Category\CategoryFactory;
 
+use Alroniks\Repository\Domain\Package\Package;
+use Alroniks\Repository\Domain\Package\PackageFactory;
+use Alroniks\Repository\Domain\Package\Packages;
 use Alroniks\Repository\Domain\Repository\RepositoryFactory;
 use Alroniks\Repository\Domain\Repository\Repositories;
 use Alroniks\Repository\Domain\Repository\Repository;
 use Alroniks\Repository\Helpers\Renderer;
-use Alroniks\Repository\Domain\Repository\Transformer;
+use Alroniks\Repository\Domain\Repository\RepositoryTransformer;
 use Alroniks\Repository\Models\Category\Storage;
 use Alroniks\Repository\Persistence\Memory;
 
@@ -32,57 +35,22 @@ class TestController
 
     public function test(Request $request, Response $response)
     {
-
-        $repository_1 = new Repository(null, 'Repo Test 1', 'D1', '', 0, false);
-        $repository_2 = new Repository(null, 'Repo Test 2', 'D2', '', 0, true);
-//
-//        $persistence = new Memory(Repository::class);
-//        $factory = new Factory();
-//
-//        $list = new Repositories($persistence, $factory);
-//
-//        $list->add($repository_1);
-//        $list->add($repository_2);
-//
-//        $all = $list->findAll();
-//
-//        print_r($all);
-//
-//        $special = $list->find('86110a5e6f');
-//
-//        //print_r($special);
-//
-//        // delete
-//        var_dump($list->remove($special));
-//
-//        print_r($all = $list->findAll());
-
         /** @var StorageInterface $persistence */
         $persistence = $this->container->get('persistence');
+
+        $persistence->setStorageKey(Repository::class);
+        $repository = new Repository(null, 'Repo Test 1', 'D1', '', 0, false);
+        (new Repositories($persistence, new RepositoryFactory()))->add($repository);
+
         $persistence->setStorageKey(Category::class);
+        $category = new Category($repository, null, 'Category 1');
+        (new Categories($persistence, new CategoryFactory()))->add($category);
 
-        $f = new CategoryFactory();
-        
-        $list = new Categories($persistence, $f);
+        $persistence->setStorageKey(Package::class);
+        $package = new Package();
+        (new Packages($persistence, new PackageFactory()))->add($package);
 
-        $category_1 = new Category($repository_1, null, 'Category 1');
-        $category_2 = $f->make([
-            'repository' => $repository_2,
-            'id' => null,
-            'name' => 'Category 2'
-        ]);
-
-//        print_r($category_1);
-//        print_r($category_2);
-
-        $list->add($category_1);
-        $list->add($category_2);
-
-        //print_r($list);
-
-        $c = $list->findBy('repository', '1fcb01325b');
-
-        print_r($c);
+        print_r($persistence);
 
         return $response;
     }

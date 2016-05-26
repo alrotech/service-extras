@@ -4,12 +4,13 @@ namespace Alroniks\Repository\Domain\Category;
 
 use Alroniks\Repository\AbstractRepository;
 use Alroniks\Repository\Contracts\EntityInterface;
+use Alroniks\Repository\Contracts\RepositoryInterface;
 
 /**
  * Repository of categories
  * @package Alroniks\Repository\Domain\Category
  */
-class Categories extends AbstractRepository
+class Categories extends AbstractRepository implements RepositoryInterface
 {
     /**
      * @param string $field
