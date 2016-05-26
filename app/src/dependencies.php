@@ -1,11 +1,11 @@
 <?php
 
+use Alroniks\Repository\Helpers\Renderer;
+use Alroniks\Repository\Http\Controllers\HomeController;
+use Alroniks\Repository\Http\Controllers\PackageController;
+use Alroniks\Repository\Http\Controllers\RepositoryController;
 use Alroniks\Repository\Http\Controllers\TestController;
 use Alroniks\Repository\Initializer;
-use Alroniks\Repository\Http\Controllers\HomeController;
-use Alroniks\Repository\Controllers\PackageController;
-use Alroniks\Repository\Http\Controllers\RepositoryController;
-use Alroniks\Repository\Helpers\Renderer;
 use Interop\Container\ContainerInterface;
 
 /** @var ContainerInterface $container */
@@ -39,6 +39,6 @@ $container[RepositoryController::class] = function (ContainerInterface $containe
     return new RepositoryController($container);
 };
 
-//$container[PackageController::class] = function ($c) {
-//    return new PackageController($c['router'], $c['renderer'], $c['persistence']);
-//};
+$container[PackageController::class] = function (ContainerInterface $container) {
+    return new PackageController($container);
+};
