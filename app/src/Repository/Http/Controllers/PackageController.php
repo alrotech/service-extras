@@ -13,7 +13,6 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\NotFoundException;
-use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Stream;
 
@@ -25,6 +24,12 @@ class PackageController
 {
     /** @var ContainerInterface */
     private $container;
+
+    /** @var Packages */
+    private $repository;
+
+    /** @var Callable */
+    private $renderer;
 
     /**
      * PackageController constructor.
@@ -39,12 +44,14 @@ class PackageController
         $persistence->setStorageKey(Package::class);
 
         $this->repository = new Packages($persistence, new PackageFactory());
+        $this->renderer = $this->container->get('renderer');
     }
 
     /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     * @throws NotFoundException
      */
     public function search(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
@@ -95,7 +102,7 @@ class PackageController
         }
 
         /** @var Response $response */
-        $response = $this->container->get('renderer')->render($response, [
+        $response = $this->renderer($response, [
             'packages' => [
                 '@attributes' => [
                     'type' => 'array',

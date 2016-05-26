@@ -23,6 +23,7 @@ class HomeController
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->renderer = $this->container->get('renderer');
     }
 
     /**
@@ -35,7 +36,7 @@ class HomeController
     {
         // todo: add full check of user and key and access from site to repository
         /** @var Response $response */
-        $response = $this->container->get('renderer')->render($response, [
+        $response = $this->container->get('renderer')->__invoke($response, [
             'status' => ['verified' => 1]
         ]);
 
@@ -68,7 +69,7 @@ class HomeController
         ];
 
         /** @var Response $response */
-        $response = $this->container->get('renderer')->render($response, $answer);
+        $response = $this->container->get('renderer')->__invoke($response, $answer);
 
         return $response->withStatus(200);
     }

@@ -10,6 +10,7 @@ namespace Alroniks\Repository\Domain\Repository;
 
 use Alroniks\Repository\AbstractRepository;
 use Alroniks\Repository\Contracts\RepositoryInterface;
+use Alroniks\Repository\Contracts\StorageInterface;
 
 /**
  * Class Repositories
@@ -17,5 +18,14 @@ use Alroniks\Repository\Contracts\RepositoryInterface;
  */
 class Repositories extends AbstractRepository implements RepositoryInterface
 {
+    /**
+     * @return StorageInterface
+     */
+    protected function getStorage() : StorageInterface
+    {
+        $storage = parent::getStorage();
+        $storage->setStorageKey(Repository::class);
 
+        return $storage;
+    }
 }

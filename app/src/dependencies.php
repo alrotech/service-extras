@@ -5,7 +5,7 @@ use Alroniks\Repository\Http\Controllers\HomeController;
 use Alroniks\Repository\Http\Controllers\PackageController;
 use Alroniks\Repository\Http\Controllers\RepositoryController;
 use Alroniks\Repository\Http\Controllers\TestController;
-use Alroniks\Repository\Initializer;
+use Alroniks\Repository\Middleware\ConfigReaderMiddleware;
 use Interop\Container\ContainerInterface;
 
 /** @var ContainerInterface $container */
@@ -21,9 +21,9 @@ $container['persistence'] = function (ContainerInterface $container) {
     return new \Alroniks\Repository\Persistence\Memory();
 };
 
-// Repository initializer (configuration loader)
-$container['initializer'] = function ($c) {
-    return new Initializer($c['router'], $c['persistence'], 'config/repository.json');
+// Repository initializer (configuration reader & loader)
+$container['repository'] = function (ContainerInterface $container) {
+    return new ConfigReaderMiddleware($container, 'config/repository.json');
 };
 
 // Controllers

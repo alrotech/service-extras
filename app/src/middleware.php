@@ -1,3 +1,3 @@
 <?php
 
-//$app->add($app->getContainer()->get('initializer'));
+$app->add($app->getContainer()->get('repository'));
