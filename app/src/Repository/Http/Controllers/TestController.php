@@ -47,8 +47,9 @@ class TestController
         (new Categories($persistence, new CategoryFactory()))->add($category);
 
         $persistence->setStorageKey(Package::class);
-        $package = new Package();
+        $package = new Package($category, null, 'Package 1', '1.1.1', 'package1-1.1.1-pl', 'Ivan Klimchuk', 'MIT', 'Description', 'instructions', 'changelog', '', '', '', 'cover', 'thumb', '2.2.4', '', 'mysql', 10, 'storage', 'location', 'githublink');
         (new Packages($persistence, new PackageFactory()))->add($package);
+        (new Packages($persistence, new PackageFactory()))->add((new PackageFactory())->make([]));
 
         print_r($persistence);
 
