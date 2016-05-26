@@ -1,63 +1,55 @@
 <?php declare(strict_types = 1);
 
-namespace Alroniks\Repository\Controllers;
+namespace Alroniks\Repository\Http\Controllers;
 
 use Alroniks\Repository\Contracts\StorageInterface;
-use Alroniks\Repository\GitHub;
-use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
-use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
-use Alroniks\Repository\Models\Package\PackageFactory;
-use Alroniks\Repository\Models\Package\Package;
-use Alroniks\Repository\Models\Package\Storage as PackageStorage;
-use Alroniks\Repository\Models\Package\Transformer;
-use alroniks\repository\Renderer;
+use Alroniks\Repository\Domain\Package\Package;
+use Alroniks\Repository\Domain\Package\PackageFactory;
+use Alroniks\Repository\Domain\Package\Packages;
+use Alroniks\Repository\Domain\Package\PackageTransformer;
+use Alroniks\Repository\Domain\RecordNotFoundException;
+use Alroniks\Repository\Helpers\GitHub;
+use Interop\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Stream;
-use Slim\Router;
 
 /**
- * Class Package
- * @package alroniks\repository\controllers
+ * Class PackageController
+ * @package Alroniks\Repository\Http\Controllers
  */
 class PackageController
 {
-    /** @var Router */
-    private $router;
-
-    /** @var Renderer */
-    private $renderer;
-
-    /** @var PackageStorage */
-    private $packageStorage;
-
-    /** @var CategoryStorage */
-    private $categoryStorage;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * Package constructor.
-     * @param Router $router
-     * @param Renderer $renderer
-     * @param StorageInterface $persistence
+     * PackageController constructor.
+     * @param ContainerInterface $container
      */
-    public function __construct(Router $router, Renderer $renderer, StorageInterface $persistence)
+    public function __construct(ContainerInterface $container)
     {
-        $this->router = $router;
-        $this->renderer = $renderer;
-        $this->packageStorage = new PackageStorage($persistence, new PackageFactory());
-        $this->categoryStorage = new CategoryStorage($persistence, new CategoryFactory());
+        $this->container = $container;
+
+        /** @var StorageInterface $persistence */
+        $persistence = $container->get('persistence');
+        $persistence->setStorageKey(Package::class);
+
+        $this->repository = new Packages($persistence, new PackageFactory());
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @return static
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function search(Request $request, Response $response)
+    public function search(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         // search package by signature!!!
-        $signature = $request->getParam('signature', '');
+        //$signature = $request->getParam('signature', '');
         // getting info about package
         //$package = $this->packageStorage->findBy('signature', $signature);
 
@@ -72,28 +64,38 @@ class PackageController
         // добавить middleware для проверки авторизации и доступа к определенным пакетам и репозиториям
 
 
-        $query = $request->getParam('query', false);
+        $query = $request->getParam('query', false); // ??
+
         $tag = $request->getParam('tag', false);
-        $sorter = $request->getParam('sorter', false);
+
+        // $sorter = $request->getParam('sorter', false);
 
         $start = $request->getParam('start', 0);
         $limit = $request->getParam('limit', 10);
 
         // filtering by tag
-        if ($tag) {
-            // todo: replace by universal findBy
+//        if ($tag) {
+//            // todo: replace by universal findBy
+//
+//            $packages = $this->packageStorage->findByCategory($tag);
+//        } else {
+//            $packages = $this->packageStorage->all();
+//        }
 
-            $packages = $this->packageStorage->findByCategory($tag);
-        } else {
-            $packages = $this->packageStorage->all();
+        $this->repository->add((new PackageFactory())->make([]));
+
+        $packages = $this->repository->findAll();
+
+        if (!count($packages)) {
+            throw new NotFoundException($request, $response);
         }
 
         foreach ($packages as &$package) {
-            $package = Transformer::transform($package);
+            $package = PackageTransformer::transform($package);
         }
 
         /** @var Response $response */
-        $response = $this->renderer->render($response, [
+        $response = $this->container->get('renderer')->render($response, [
             'packages' => [
                 '@attributes' => [
                     'type' => 'array',
@@ -109,19 +111,39 @@ class PackageController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @return string
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function versions(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    {
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function update(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    {
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      * @throws NotFoundException
      */
-    public function download(Request $request, Response $response)
+    public function download(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $packageId = $request->getAttribute('id');
+        $package = $request->getAttribute('id');
 
-        /** @var Package $package */
-        $package = $this->packageStorage->find($packageId);
-
-        if (!$package) {
+        try {
+            /** @var Package $package */
+            $package = $this->repository->find($package);
+        } catch (RecordNotFoundException $e) {
             throw new NotFoundException($request, $response);
         }
 
@@ -137,18 +159,18 @@ class PackageController
         
         $encodedLink = base64_encode($result);
         
-        return $this->router
+        return $this->container->get('router')
             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
             ->pathFor('package-direct-link', ['link' => $encodedLink]);
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @return static
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      * @throws NotFoundException
      */
-    public function direct(Request $request, Response $response)
+    public function direct(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         $link = $request->getAttribute('link');
         $decodedLink = base64_decode($link);

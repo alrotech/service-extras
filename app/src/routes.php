@@ -1,7 +1,7 @@
 <?php
 
 use Alroniks\Repository\Http\Controllers\HomeController;
-use Alroniks\Repository\Controllers\PackageController;
+use Alroniks\Repository\Http\Controllers\PackageController;
 use Alroniks\Repository\Http\Controllers\RepositoryController;
 use Alroniks\Repository\Http\Controllers\TestController;
 
@@ -23,23 +23,23 @@ $app->get('/repository', [$container[RepositoryController::class], 'index'])
 $app->get('/repository/{id:[0-9a-z]+}', [$container[RepositoryController::class], 'show'])
     ->setName('repository-single');
 
-//// shows list of packages, that filtered by search parameters
-//$app->get('/package', [$container[PackageController::class], 'search'])
-//    ->setName('package-search');
+# shows list of packages, that filtered by search parameters
+$app->get('/package', [$container[PackageController::class], 'search'])
+    ->setName('package-search');
 
-//// returns list of available versions of package (for check updates)
-//$app->get('/package/versions', [$container[PackageController::class], 'versions'])
-//    ->setName('package-versions');
-//
-//// requests update of installed package
-//$app->get('/package/update', [$container[PackageController::class], 'update'])
-//    ->setName('package-update');
-//
-//// gets link to package form github for download and install
-//$app->get('/package/download/{id:[0-9a-z]+}', [$container[PackageController::class], 'download'])
-//    ->setName('package-download');
-//
-//// proxy for direct link to package (on amazon), because MODX adds additional parameter
-//// to request, that brake signature of query string to file and causes an error
-//$app->get('/package/direct/{link}', [$container[PackageController::class], 'direct'])
-//    ->setName('package-direct-link');
+# returns list of available versions of package (for check updates)
+$app->get('/package/versions', [$container[PackageController::class], 'versions'])
+    ->setName('package-versions');
+
+# requests update of installed package
+$app->get('/package/update', [$container[PackageController::class], 'update'])
+    ->setName('package-update');
+
+# gets link to package form github for download and install
+$app->get('/package/download/{id:[0-9a-z]+}', [$container[PackageController::class], 'download'])
+    ->setName('package-download');
+
+# proxy for direct link to package (on amazon), because MODX adds additional parameter
+# to request, that brake signature of query string to file and causes an error
+$app->get('/package/direct/{link}', [$container[PackageController::class], 'direct'])
+    ->setName('package-direct-link');

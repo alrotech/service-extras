@@ -23,6 +23,8 @@ class CategoryTransformer implements TransformerInterface
         unset($output['repository']);
         $output['packages'] = 10; // todo
 
+        ksort($output);
+
         return $output;
     }
 }
