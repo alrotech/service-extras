@@ -5,15 +5,15 @@ use Alroniks\Repository\Controllers\PackageController;
 use Alroniks\Repository\Http\Controllers\RepositoryController;
 use Alroniks\Repository\Http\Controllers\TestController;
 
-$app->get('/', [$container[TestController::class], 'test']);
+$app->get('/', [$container[TestController::class], 'test']); // should be removed
 
-//// verifies credentials and site when adding new package provider through Package Manager
-//$app->get('/verify', [$container[HomeController::class], 'verify'])
-//    ->setName('verify');
-//
-//// shows statistics about most downloaded ans newest packages in repository
-//$app->get('/home', 'HomeController:index')
-//    ->setName('home');
+# verifies credentials and site when adding new package provider through Package Manager
+$app->get('/verify', [$container[HomeController::class], 'verify'])
+    ->setName('verify');
+
+# shows statistics about most downloaded ans newest packages in repository
+$app->get('/home', [$container[HomeController::class], 'index'])
+    ->setName('home');
 
 # shows list of available repositories
 $app->get('/repository', [$container[RepositoryController::class], 'index'])
@@ -26,7 +26,7 @@ $app->get('/repository/{id:[0-9a-z]+}', [$container[RepositoryController::class]
 //// shows list of packages, that filtered by search parameters
 //$app->get('/package', [$container[PackageController::class], 'search'])
 //    ->setName('package-search');
-//
+
 //// returns list of available versions of package (for check updates)
 //$app->get('/package/versions', [$container[PackageController::class], 'versions'])
 //    ->setName('package-versions');

@@ -1,6 +1,6 @@
 <?php
 
-namespace Alroniks\Repository\Models\Package;
+namespace Alroniks\Repository\Domain\Package;
 
 use Alroniks\Repository\Contracts\EntityInterface;
 use DateTime;

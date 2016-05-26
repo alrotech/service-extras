@@ -58,6 +58,12 @@ class Memory implements StorageInterface
         return $this->data[$this->storageKey] ?? [];
     }
 
+    /**/
+    public function search()
+    {
+
+    }
+
     /**
      * Delete data specified by id
      * If there is no such data - false returns,

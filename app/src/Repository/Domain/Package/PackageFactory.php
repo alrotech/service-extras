@@ -1,14 +1,15 @@
 <?php
 
-namespace Alroniks\Repository\Models\Package;
+namespace Alroniks\Repository\Domain\Package;
 
 use Alroniks\Repository\Contracts\FactoryInterface;
+use Alroniks\Repository\Models\Package\Package;
 
 /**
- * Class Factory
- * @package Alroniks\Repository\Models\Package
+ * Class PackageFactory
+ * @package Alroniks\Repository\Domain\Package
  */
-class Factory implements FactoryInterface
+class PackageFactory implements FactoryInterface
 {
     /**
      * @param $components

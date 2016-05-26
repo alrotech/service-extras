@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Http\Controllers;
 
-use Alroniks\Repository\Contracts\StorageInterface;
-use Alroniks\Repository\Helpers\Renderer;
+use Interop\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
@@ -14,44 +13,42 @@ use Slim\Http\Response;
  */
 class HomeController
 {
-    /** @var Renderer */
-    private $renderer;
+    /** @var ContainerInterface */
+    private $container;
 
     /**
-     * Home constructor.
-     * @param Renderer $renderer
-     * @param StorageInterface $persistence
+     * HomeController constructor.
+     * @param ContainerInterface $container
      */
-    public function __construct(Renderer $renderer, StorageInterface $persistence)
+    public function __construct(ContainerInterface $container)
     {
-        $this->renderer = $renderer;
+        $this->container = $container;
     }
 
     /**
      * Verifies user credentials and access to the repository
-     * @param Request $request
-     * @param Response $response
-     * @return Response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function verify(ServerRequestInterface $request, Response $response)
+    public function verify(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         // todo: add full check of user and key and access from site to repository
         /** @var Response $response */
-        $response = $this->renderer->render($response, [
+        $response = $this->container->get('renderer')->render($response, [
             'status' => ['verified' => 1]
         ]);
-        $response->withStatus(200);
 
-        return $response;
+        return $response->withStatus(200);
     }
 
     /**
      * Shows actual stats about connected repository
-     * @param Request $request
-     * @param Response $response
-     * @return Response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return static
      */
-    public function index(Request $request, Response $response)
+    public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
         // todo: collect real stats from repository (get data about available packages for this user)
         $answer = [
@@ -71,9 +68,8 @@ class HomeController
         ];
 
         /** @var Response $response */
-        $response = $this->renderer->render($response, $answer);
-        $response->withStatus(200);
+        $response = $this->container->get('renderer')->render($response, $answer);
 
-        return $response;
+        return $response->withStatus(200);
     }
 }

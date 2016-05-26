@@ -1,43 +1,37 @@
 <?php
 
-namespace Alroniks\Repository\Models\Package;
+namespace Alroniks\Repository\Domain\Package;
 
+use Alroniks\Repository\Contracts\EntityInterface;
 use DateTime;
 
 /**
  * Class Transformer
- * @package Alroniks\Repository\Models\Package
+ * @package Alroniks\Repository\Domain\Package
  */
 class Transformer
 {
     /**
-     * @param Package $package
+     * @param EntityInterface $entity
      * @return array
      */
-    public static function transform(Package $package)
+    public static function transform(EntityInterface $entity) : array
     {
-        return [
-            'id' => $package->getId(),
-            'name' => $package->getName(),
-            'version' => $package->getVersion(),
-            'release' => 'pl',
-            'display_name' => $package->getSignature(),
-            'signature' => $package->getSignature(),
-            'author' => $package->getAuthor(),
-            'license' => $package->getLicense(),
-            'description' => ['@cdata' => $package->getDescription()],
-            'instructions' => ['@cdata' => $package->getInstructions()],
-            'changelog' => ['@cdata' => $package->getChangelog()],
-            'createdon' => $package->getCreatedon()->format(DateTime::ISO8601),
-            'editedon' => $package->getEditedon()->format(DateTime::ISO8601),
-            'releasedon' => $package->getReleasedon()->format(DateTime::ISO8601),
-            'screenshot' => $package->getCover(),
-            'thumbnail' => $package->getThumb(),
-            'minimum_supports' => $package->getMinimum(),
-            'breaks_at' => $package->getMaximum() ?: 1000000,
-            'supports_db' => $package->getDatabases(),
-            'downloads' => $package->getDownloads(),
-            'location' => $package->getLocation()
-        ];
+        $output = $entity->toArray();
+
+        $output['release'] = 'pl';
+        $output['description'] = ['@cdata' => $package->getDescription()];
+        $output['instructions'] = ['@cdata' => $package->getInstructions()];
+        $output['changelog'] = ['@cdata' => $package->getChangelog()];
+
+        $output['breaks_at'] = $output['changelog'] ?: 1000000;
+
+        return $output;
+
+//        return [
+//            'createdon' => $package->getCreatedon()->format(DateTime::ISO8601),
+//            'editedon' => $package->getEditedon()->format(DateTime::ISO8601),
+//            'releasedon' => $package->getReleasedon()->format(DateTime::ISO8601),
+//        ];
     }
 }
