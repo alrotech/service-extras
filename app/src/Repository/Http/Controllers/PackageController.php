@@ -6,7 +6,7 @@ use Alroniks\Repository\Contracts\StorageInterface;
 use Alroniks\Repository\GitHub;
 use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
 use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
-use Alroniks\Repository\Models\Package\Factory;
+use Alroniks\Repository\Models\Package\PackageFactory;
 use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Alroniks\Repository\Models\Package\Transformer;
@@ -45,7 +45,7 @@ class PackageController
     {
         $this->router = $router;
         $this->renderer = $renderer;
-        $this->packageStorage = new PackageStorage($persistence, new Factory());
+        $this->packageStorage = new PackageStorage($persistence, new PackageFactory());
         $this->categoryStorage = new CategoryStorage($persistence, new CategoryFactory());
     }
 

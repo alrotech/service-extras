@@ -10,7 +10,7 @@ use Alroniks\Repository\Models\Package\Package;
 use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
 use Alroniks\Repository\Models\Repository\Repository;
 use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
-use Alroniks\Repository\Models\Package\Factory as PackageFactory;
+use Alroniks\Repository\Models\Package\PackageFactory as PackageFactory;
 use Alroniks\Repository\Models\Package\Storage as PackageStorage;
 use Slim\Http\Request;
 use Slim\Http\Response;

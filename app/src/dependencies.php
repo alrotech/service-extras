@@ -27,16 +27,15 @@ $container['initializer'] = function ($c) {
 };
 
 // Controllers
-$container[TestController::class] = function ($container) {
+$container[TestController::class] = function (ContainerInterface $container) {
     return new TestController($container);
 };
 
+$container[HomeController::class] = function (ContainerInterface $container) {
+    return new HomeController($container);
+};
 
-//$container[HomeController::class] = function ($c) {
-//    return new HomeController($c['renderer'], $c['persistence']);
-//};
-
-$container[RepositoryController::class] = function ($container) {
+$container[RepositoryController::class] = function (ContainerInterface $container) {
     return new RepositoryController($container);
 };
 
