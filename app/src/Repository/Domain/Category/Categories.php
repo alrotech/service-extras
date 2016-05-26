@@ -5,6 +5,7 @@ namespace Alroniks\Repository\Domain\Category;
 use Alroniks\Repository\AbstractRepository;
 use Alroniks\Repository\Contracts\EntityInterface;
 use Alroniks\Repository\Contracts\RepositoryInterface;
+use Alroniks\Repository\Contracts\StorageInterface;
 
 /**
  * Repository of categories
@@ -12,6 +13,17 @@ use Alroniks\Repository\Contracts\RepositoryInterface;
  */
 class Categories extends AbstractRepository implements RepositoryInterface
 {
+    /**
+     * @return StorageInterface
+     */
+    protected function getStorage() : StorageInterface
+    {
+        $storage = parent::getStorage();
+        $storage->setStorageKey(Category::class);
+
+        return $storage;
+    }
+
     /**
      * @param string $field
      * @param $value

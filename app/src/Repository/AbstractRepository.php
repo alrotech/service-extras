@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Copyright (c) 2016 Alroniks Experts LLC
  *
@@ -42,7 +42,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Returns current storage implementation
      * @return StorageInterface
      */
-    public function getStorage()
+    protected function getStorage() : StorageInterface
     {
         return $this->persistence;
     }
@@ -51,7 +51,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * Returns factory for creating entities
      * @return FactoryInterface
      */
-    public function getFactory()
+    protected function getFactory() : FactoryInterface
     {
         return $this->factory;
     }

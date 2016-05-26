@@ -37,16 +37,15 @@ class TestController
     {
         /** @var StorageInterface $persistence */
         $persistence = $this->container->get('persistence');
-
-        $persistence->setStorageKey(Repository::class);
+        
         $repository = new Repository(null, 'Repo Test 1', 'D1', '', 0, false);
         (new Repositories($persistence, new RepositoryFactory()))->add($repository);
 
-        $persistence->setStorageKey(Category::class);
+        //$persistence->setStorageKey(Category::class);
         $category = new Category($repository, null, 'Category 1');
         (new Categories($persistence, new CategoryFactory()))->add($category);
 
-        $persistence->setStorageKey(Package::class);
+        //$persistence->setStorageKey(Package::class);
         $package = new Package($category, null, 'Package 1', '1.1.1', 'package1-1.1.1-pl', 'Ivan Klimchuk', 'MIT', 'Description', 'instructions', 'changelog', '', '', '', 'cover', 'thumb', '2.2.4', '', 'mysql', 10, 'storage', 'location', 'githublink');
         (new Packages($persistence, new PackageFactory()))->add($package);
         (new Packages($persistence, new PackageFactory()))->add((new PackageFactory())->make([]));

@@ -1,58 +1,56 @@
-<?php
+<?php declare(strict_types = 1);
 
-namespace Alroniks\Repository;
+namespace Alroniks\Repository\Middleware;
 
 use Alroniks\Repository\Contracts\StorageInterface;
-use Alroniks\Repository\Models\Category\Category;
-use Alroniks\Repository\Models\Category\Factory as CategoryFactory;
-use Alroniks\Repository\Models\Category\Storage as CategoryStorage;
-use Alroniks\Repository\Models\Package\Package;
-use Alroniks\Repository\Models\Repository\Factory as RepositoryFactory;
-use Alroniks\Repository\Models\Repository\Repository;
-use Alroniks\Repository\Models\Repository\Storage as RepositoryStorage;
-use Alroniks\Repository\Models\Package\PackageFactory as PackageFactory;
-use Alroniks\Repository\Models\Package\Storage as PackageStorage;
+use Alroniks\Repository\Domain\Category\Categories;
+use Alroniks\Repository\Domain\Category\CategoryFactory;
+use Alroniks\Repository\Domain\Package\PackageFactory;
+use Alroniks\Repository\Domain\Package\Packages;
+use Alroniks\Repository\Domain\RecordNotFoundException;
+use Alroniks\Repository\Domain\Repository\Repositories;
+use Alroniks\Repository\Domain\Repository\RepositoryFactory;
+use Alroniks\Repository\Helpers\GitHub;
+use Alroniks\Repository\Helpers\Originality;
+use Interop\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
-use Slim\Router;
 
-/**
- * Class Initializer
- * @package Alroniks\Repository
- */
-class Initializer
+class ConfigReaderMiddleware
 {
-    /** @var Router */
-    private $router;
+    /** @var ContainerInterface */
+    private $container;
 
     /** @var StorageInterface */
     private $persistence;
 
+    /** @var array */
     private $config;
-
-    /**
-     * Initializer constructor.
-     * @param StorageInterface $persistence
-     * @param $config
-     */
-    public function __construct(Router $router, StorageInterface $persistence, $config)
+    
+    public function __construct(ContainerInterface $container, string $config)
     {
-        $this->router = $router;
-        $this->persistence = $persistence;
+        $this->container = $container;
+        $this->persistence = $container->get('persistence');
         $this->config = json_decode(file_get_contents($config));
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param $next
-     * @return Response
+     * @return ResponseInterface
      */
-    public function __invoke(Request $request, Response $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) : ResponseInterface
     {
-        $repositoryStorage = new RepositoryStorage($this->persistence, new RepositoryFactory());
-        $categoryStorage = new CategoryStorage($this->persistence, new CategoryFactory());
-        $packageStorage = new PackageStorage($this->persistence, new PackageFactory());
+        /** @var Repositories $repositories */
+        $repositories = new Repositories($this->persistence, new RepositoryFactory());
+
+        /** @var Categories $categories */
+        $categories = new Categories($this->persistence, new CategoryFactory());
+
+        /** @var Packages $packages */
+        $packages = new Packages($this->persistence, new PackageFactory());
 
         $rank = 0;
         /** @var \stdClass $repositoryConfig */
@@ -60,15 +58,18 @@ class Initializer
 
             // not show this repository if domain are not allowed
             if (!empty($repositoryConfig->domains)) {
+                /** @var Request $request */
                 if (!in_array($request->getParam('http_host'), $repositoryConfig->domains)) {
                     continue;
                 }
             }
             
-            $repositoryId = Repository::ID($repositoryConfig->name);
-            /** @var Repository $repository */
-            if (!$repository = $repositoryStorage->find($repositoryId)) {
-                $repository = $repositoryStorage->create((new RepositoryFactory())->make([
+            $repositoryId = call_user_func(new Originality, $repositoryConfig->name);
+
+            try {
+                $repository = $repositories->find($repositoryId);
+            } catch (RecordNotFoundException $e) {
+                $repository = $repositories->add((new RepositoryFactory())->make([
                     'id' => $repositoryId,
                     'name' => $repositoryConfig->name,
                     'description' => $repositoryConfig->description,
@@ -84,14 +85,17 @@ class Initializer
             
             /** @var \stdClass $categoryConfig */
             foreach ($repositoryConfig->categories as $categoryConfig) {
-                $categoryId = Category::ID($repositoryId . $categoryConfig->name);
-                /** @var Category $category */
-                if (!$category = $categoryStorage->find($categoryId)) {
-                    $category = $categoryStorage->create((new CategoryFactory())->make([
-                        'repositoryId' => $repository->getId(), 
-                        'id' => $categoryId, 
+
+                $categoryId = call_user_func(new Originality, $repositoryId . $categoryConfig->name);
+
+                try {
+                    $category = $categories->find($categoryId);
+                } catch (RecordNotFoundException $e) {
+                    $category = $categories->add((new CategoryFactory())->make([
+                        'repository' => $repository,
+                        'id' => $categoryId,
                         'name' => $categoryConfig->name
-                    ]));    
+                    ]));
                 }
 
                 if (!isset($categoryConfig->packages)) {
@@ -99,16 +103,20 @@ class Initializer
                 }
 
                 foreach ($categoryConfig->packages as $packageLink) {
-                    $packageId = Package::ID($categoryId . $packageLink);
-                    if (!$package = $packageStorage->find($packageId)) {
+
+                    $packageId = call_user_func(new Originality, $categoryId . $packageLink);
+
+                    try {
+                        $package = $packages->find($packageId);
+                    } catch (RecordNotFoundException $e) {
                         $meta = $this->fetchPackageMeta($packageLink);
 
-                        $location = $this->router
+                        $location = $this->container->get('router')
                             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
                             ->pathFor('package-download', ['id' => $packageId]);
 
-                        $package = $packageStorage->create((new PackageFactory())->make([
-                            'category' => $categoryId,
+                        $package = $packages->add((new PackageFactory())->make([
+                            'category' => $category,
                             'id' => $packageId,
                             'name' => $meta['name'],
                             'version' => $meta['version'],

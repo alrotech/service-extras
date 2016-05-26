@@ -3,6 +3,7 @@
 namespace Alroniks\Repository\Domain\Repository;
 
 use Alroniks\Repository\Contracts\EntityInterface;
+use Alroniks\Repository\Helpers\Originality;
 
 /**
  * Repository entity
@@ -34,7 +35,7 @@ final class Repository implements EntityInterface
         int $rank, 
         bool $templated
     ) {
-        $this->id = $id ?: substr(md5(md5($name)), 0, 10);
+        $this->id = $id ?: call_user_func(new Originality, $name);
         $this->name = $name;
         $this->description = $description;
         $this->createdon = new \DateTimeImmutable($createdon);

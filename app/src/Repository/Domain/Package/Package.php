@@ -3,6 +3,7 @@
 namespace Alroniks\Repository\Domain\Package;
 
 use Alroniks\Repository\Contracts\EntityInterface;
+use Alroniks\Repository\Helpers\Originality;
 
 /**
  * Class Package
@@ -102,7 +103,7 @@ final class Package implements EntityInterface
         string $githublink
     ) {
         $this->category = $category instanceof EntityInterface ? $category->getId() : $category;
-        $this->id = $id ?: substr(md5(md5($this->category . $githublink)), 0, 10);
+        $this->id = $id ?: call_user_func(new Originality, $this->category . $githublink);
         $this->name = $name;
         $this->version = $version;
         $this->signature = $signature;

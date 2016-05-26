@@ -3,6 +3,7 @@
 namespace Alroniks\Repository\Domain\Category;
 
 use Alroniks\Repository\Contracts\EntityInterface;
+use Alroniks\Repository\Helpers\Originality;
 
 /**
  * Class Category
@@ -27,7 +28,7 @@ final class Category implements EntityInterface
         string $name
     ) {
         $this->repository = $repository instanceof EntityInterface ? $repository->getId() : $repository;
-        $this->id = $id ?: substr(md5(md5($this->repository . $name)), 0, 10);
+        $this->id = $id ?: call_user_func(new Originality, $this->repository . $name);
         $this->name = $name;
     }
 

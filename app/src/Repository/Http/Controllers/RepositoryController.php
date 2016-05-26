@@ -29,6 +29,9 @@ class RepositoryController
     /** @var Repositories */
     private $repository;
 
+    /** @var Callable */
+    private $renderer;
+
     /**
      * RepositoryController constructor.
      * @param ContainerInterface $container
@@ -42,6 +45,7 @@ class RepositoryController
         $persistence->setStorageKey(Repository::class);
         
         $this->repository = new Repositories($persistence, new RepositoryFactory());
+        $this->renderer = $this->container->get('renderer');
     }
 
     /**
@@ -63,7 +67,7 @@ class RepositoryController
         }
 
         /** @var ResponseInterface $response */
-        $response = $this->container->get('renderer')->render($response, [
+        $response = call_user_func($this->renderer, $response, [
             'repositories' => [
                 '@attributes' => [
                     'type' => 'array',
@@ -74,9 +78,6 @@ class RepositoryController
                 'repository' => $repositories
             ]
         ]);
-
-        //Paginator classs
-
 
         return $response->withStatus(200);
     }
@@ -109,7 +110,7 @@ class RepositoryController
         }
 
         /** @var ResponseInterface $response */
-        $response = $this->container->get('renderer')->render($response, [
+        $response = call_user_func($this->renderer, $response, [
             'repository' => array_merge(
                 RepositoryTransformer::transform($repository),
                 ['tag' => $categories]
