@@ -3,8 +3,6 @@
 namespace Alroniks\Repository\Domain\Package;
 
 use Alroniks\Repository\Contracts\EntityInterface;
-use DateTime;
-use DateTimeImmutable;
 
 /**
  * Class Package
@@ -56,55 +54,55 @@ final class Package implements EntityInterface
 
     /**
      * Package constructor.
-     * @param $category
-     * @param $id
-     * @param $name
-     * @param $version
-     * @param $signature
-     * @param $author
-     * @param $license
-     * @param $description
-     * @param $instructions
-     * @param $changelog
+     * @param null|EntityInterface $category
+     * @param null|string $id
+     * @param string $name
+     * @param string $version
+     * @param string $signature
+     * @param string $author
+     * @param string $license
+     * @param string $description
+     * @param string $instructions
+     * @param string $changelog
      * @param $createdon
      * @param $editedon
      * @param $releasedon
-     * @param $cover
-     * @param $thumb
-     * @param $minimum
-     * @param $maximum
-     * @param $databases    
-     * @param $downloads
-     * @param $storage
-     * @param $location
-     * @param $githublink
+     * @param string $cover
+     * @param string $thumb
+     * @param string $minimum
+     * @param string $maximum
+     * @param string $databases
+     * @param int $downloads
+     * @param string $storage
+     * @param string $location
+     * @param string $githublink
      */
     public function __construct(
-        $category,
+        $category = null,
         $id = null,
-        $name,
-        $version,
-        $signature,
-        $author,
-        $license,
-        $description,
-        $instructions,
-        $changelog,
+        string $name,
+        string $version,
+        string $signature,
+        string $author,
+        string $license,
+        string $description,
+        string $instructions,
+        string $changelog,
         $createdon,
         $editedon,
         $releasedon,
-        $cover,
-        $thumb,
-        $minimum,
-        $maximum,
-        $databases,
-        $downloads,
-        $storage,
-        $location,
-        $githublink
+        string $cover,
+        string $thumb,
+        string $minimum,
+        string $maximum,
+        string $databases,
+        int $downloads,
+        string $storage,
+        string $location,
+        string $githublink
     ) {
-        $this->category = $category;
-        $this->id = $id;
+        $this->category = $category instanceof EntityInterface ? $category->getId() : $category;
+        $this->id = $id ?: substr(md5(md5($this->category . $githublink)), 0, 10);
         $this->name = $name;
         $this->version = $version;
         $this->signature = $signature;
@@ -113,9 +111,9 @@ final class Package implements EntityInterface
         $this->description = $description;
         $this->instructions = $instructions;
         $this->changelog = $changelog;
-        $this->createdon = $createdon instanceof DateTimeImmutable ? $createdon : new DateTimeImmutable($createdon);
-        $this->editedon = $editedon instanceof DateTimeImmutable ? $editedon : new DateTimeImmutable($editedon);
-        $this->releasedon = $releasedon instanceof DateTimeImmutable ? $releasedon : new DateTimeImmutable($releasedon);
+        $this->createdon = $createdon instanceof \DateTimeImmutable ? $createdon : new \DateTimeImmutable($createdon);
+        $this->editedon = $editedon instanceof \DateTimeImmutable ? $editedon : new \DateTimeImmutable($editedon);
+        $this->releasedon = $releasedon instanceof \DateTimeImmutable ? $releasedon : new \DateTimeImmutable($releasedon);
         $this->cover = $cover;
         $this->thumb = $thumb;
         $this->minimum = $minimum;
@@ -128,198 +126,192 @@ final class Package implements EntityInterface
     }
 
     /**
-     * @param $uniqueString
-     * @return string
-     */
-    public static function ID($uniqueString)
-    {
-        return substr(md5(md5($uniqueString)), 0, 10);
-    }
-
-    /**
      * @return mixed
      */
-    public function getCategory()
+    public function getCategory() : string
     {
         return $this->category;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getId()
+    public function getId() : string
     {
         return $this->id;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getVersion()
+    public function getVersion() : string
     {
         return $this->version;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getSignature()
+    public function getSignature() : string
     {
         return $this->signature;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getAuthor()
+    public function getAuthor() : string
     {
         return $this->author;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getLicense()
+    public function getLicense() : string
     {
         return $this->license;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDescription()
+    public function getDescription() : string
     {
         return $this->description;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getInstructions()
+    public function getInstructions() : string
     {
         return $this->instructions;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getChangelog()
+    public function getChangelog() : string
     {
         return $this->changelog;
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return \DateTimeImmutable
      */
-    public function getCreatedon()
+    public function getCreatedon() : \DateTimeImmutable
     {
         return $this->createdon;
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return \DateTimeImmutable
      */
-    public function getEditedon()
+    public function getEditedon() : \DateTimeImmutable
     {
         return $this->editedon;
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return \DateTimeImmutable
      */
-    public function getReleasedon()
+    public function getReleasedon() : \DateTimeImmutable
     {
         return $this->releasedon;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCover()
+    public function getCover() : string
     {
         return $this->cover;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getThumb()
+    public function getThumb() : string
     {
         return $this->thumb;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getMinimum()
+    public function getMinimum() : string
     {
         return $this->minimum;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getMaximum()
+    public function getMaximum() : string
     {
         return $this->maximum;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDatabases()
+    public function getDatabases() : string
     {
         return $this->databases;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getDownloads()
+    public function getDownloads() : int
     {
         return $this->downloads;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getStorage()
+    public function getStorage() : string
     {
         return $this->storage;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getLocation()
+    public function getLocation() : string
     {
         return $this->location;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getGitHubLink()
+    public function getGitHubLink() : string
     {
         return $this->githublink;
     }
 
-    public function __toArray()
+    /**
+     * @return array
+     */
+    public function toArray() : array
     {
         $array = get_class_vars(__CLASS__);
 
         foreach ($array as $key => &$value) {
             $value = call_user_func([$this, 'get' . lcfirst($key)]);
-            if ($value instanceof DateTimeImmutable) {
-                $value = $value->format(DateTime::ISO8601);
+            if ($value instanceof \DateTimeImmutable) {
+                $value = $value->format(\DateTime::ISO8601);
             }
         }
 
@@ -327,11 +319,10 @@ final class Package implements EntityInterface
     }
 
     /**
-     * Return object as an array, like hash table
-     * @return array
+     * @return string
      */
-    public function toArray() : array
+    public function __toString() : string
     {
-        // TODO: Implement toArray() method.
+        return $this->getId();
     }
 }

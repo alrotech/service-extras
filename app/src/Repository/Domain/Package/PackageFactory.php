@@ -17,52 +17,29 @@ class PackageFactory implements FactoryInterface
      */
     public function make(array $raw) : EntityInterface
     {
-        // generate unique identifier
-        if (!$components['id']) {
-            $components['id'] = Package::ID($components['category'] . $components['storage']);
-        }
-
         return new Package(
-            (string)$components['category'],
-
-            (string)$components['id'],
-            (string)$components['name'],
-            (string)$components['version'],
-            (string)$components['signature'],
-        
-            // author and licence
-            (string)$components['author'],
-            (string)$components['license'],
-
-            // full text materials
-            (string)$components['description'],
-            (string)$components['instructions'],
-            (string)$components['changelog'],
-        
-            // dates
-            $components['createdon'],
-            $components['editedon'],
-            $components['releasedon'],
-        
-            // images (covers)
-            (string)$components['cover'],
-            (string)$components['thumb'],
-
-            // support
-            (string)$components['minimum'],
-            (string)$components['maximum'],
-            (string)$components['databases'],
-
-            (integer)$components['downloads'],
-        
-            // assets file
-            (string)$components['storage'],
-
-            // download link
-            (string)$components['location'],
-
-            // link to repository on github  
-            (string)$components['githublink']
+            (string)($raw['category'] ?? null),
+            (string)($raw['id'] ?? null),
+            (string)($raw['name'] ?? 'no name'),
+            (string)($raw['version'] ?? '0.0.0'),
+            (string)($raw['signature'] ?? 'noname-0.0.0-pl'),
+            (string)($raw['author'] ?? 'author'),
+            (string)($raw['license'] ?? 'license'),
+            (string)($raw['description'] ?? 'description'),
+            (string)($raw['instructions'] ?? 'instructions'),
+            (string)($raw['changelog'] ?? 'changelog'),
+            ($raw['createdon'] ?? new \DateTimeImmutable()),
+            ($raw['editedon'] ?? new \DateTimeImmutable()),
+            ($raw['releasedon'] ?? new \DateTimeImmutable()),
+            (string)($raw['cover'] ?? 'cover'),
+            (string)($raw['thumb'] ?? 'thumb'),
+            (string)($raw['minimum'] ?? '2.2.4'),
+            (string)($raw['maximum'] ?? ''),
+            (string)($raw['databases'] ?? 'mysql'),
+            (integer)($raw['downloads'] ?? 0),
+            (string)($raw['storage'] ?? 'storage'),
+            (string)($raw['location'] ?? 'location'),
+            (string)($raw['githublink'] ?? 'github link')
         );
     }
 }
