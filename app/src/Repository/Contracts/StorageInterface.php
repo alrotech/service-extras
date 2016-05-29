@@ -31,7 +31,7 @@ interface StorageInterface
     /**
      * Returns data by specified id.
      * If there is no such data null is returned.
-     * @param int $id
+     * @param string $id
      * @return array
      */
     public function retrieve(string $id) : array;
@@ -43,6 +43,13 @@ interface StorageInterface
     public function all() : array;
 
     /**
+     * @param string $field
+     * @param $value
+     * @return array
+     */
+    public function search(string $field, $value) : array;
+
+    /**
      * Delete data specified by id
      * If there is no such data - false returns,
      * if data has been successfully deleted - true returns.
@@ -50,5 +57,17 @@ interface StorageInterface
      * @return bool
      */
     public function delete(string $id) : bool;
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function take(int $limit, int $offset) : array;
+
+    /**
+     * @return int
+     */
+    public function count() : int;
 
 }

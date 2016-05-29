@@ -28,4 +28,5 @@ class Repositories extends AbstractRepository implements RepositoryInterface
 
         return $storage;
     }
+
 }

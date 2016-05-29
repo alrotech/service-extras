@@ -58,10 +58,18 @@ class Memory implements StorageInterface
         return $this->data[$this->storageKey] ?? [];
     }
 
-    /**/
-    public function search()
+    /**
+     * @param string $field
+     * @param $value
+     * @return array
+     */
+    public function search(string $field, $value) : array
     {
-
+        return array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
+            if ($entity[$field] === $value) {
+                return $entity;
+            }
+        });
     }
 
     /**
@@ -80,5 +88,23 @@ class Memory implements StorageInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function take(int $limit, int $offset) : array
+    {
+        return array_slice($this->data[$this->storageKey], $offset, $limit, true);
+    }
+
+    /**
+     * @return int
+     */
+    public function count() : int
+    {
+        return count($this->data[$this->storageKey]);
     }
 }
