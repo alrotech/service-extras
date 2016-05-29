@@ -27,6 +27,10 @@ abstract class AbstractRepository implements RepositoryInterface
     /** @var FactoryInterface */
     private $factory;
 
+    private $offset = null;
+
+    private $limit = null;
+
     /**
      * AbstractRepository constructor.
      * @param StorageInterface $persistence
@@ -95,13 +99,15 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function findAll() : array
     {
-        $collection = [];
-
-        foreach ($this->getStorage()->all() as $raw) {
-            $collection[] = $this->getFactory()->make($raw);
+        $entities = !is_null($this->limit) && !is_null($this->offset)
+            ? $this->getStorage()->search()->take($this->limit, $this->offset)
+            : $this->getStorage()->search()->all();
+        
+        foreach ($entities as &$raw) {
+            $raw = $this->getFactory()->make($raw);
         }
 
-        return $collection;
+        return $entities;
     }
 
     /**
@@ -111,13 +117,15 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function findBy(string $field, $value) : array
     {
-        $entities = $this->getStorage()->search($field, $value) ?: [];
+        $entities = $this->limit && $this->offset
+            ? $this->getStorage()->search($field, $value)->take($this->limit, $this->offset)
+            : $this->getStorage()->search($field, $value)->all();
 
-        foreach ($entities as &$entity) {
-            $entity = $this->getFactory()->make($entity);
+        foreach ($entities as &$raw) {
+            $raw = $this->getFactory()->make($raw);
         }
 
-        return $entities;
+        return $entities ?: [];
     }
 
     /**
@@ -127,27 +135,19 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function paginate(int $currentPage, int $perPage = 10) : array
     {
+        $currentPage++; // because started from 0
+
         $total = $this->getStorage()->count();
         $totalPages = ceil($total / $perPage);
 
-        if ($currentPage > $totalPages) {
-            $currentPage = $totalPages;
-        }
-
-        $entities = $this->getStorage()->take($perPage, intval($currentPage * $perPage - $perPage));
-
-        foreach ($entities as &$entity) {
-            $entity = $this->getFactory()->make($entity);
-        }
+        $this->limit = $perPage;
+        $this->offset = intval($currentPage * $perPage - $perPage);
 
         return [
-            $entities,
-            [
-                'type' => 'array',
-                'total' => $total,
-                'page' => $currentPage,
-                'of' => $totalPages
-            ]
+            'type' => 'array',
+            'total' => $total,
+            'page' => $currentPage,
+            'of' => $totalPages
         ];
     }
 }

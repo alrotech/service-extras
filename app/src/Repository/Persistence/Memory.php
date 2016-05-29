@@ -15,6 +15,8 @@ class Memory implements StorageInterface
     /** @var array */
     private $data = [];
 
+    private $filtered = [];
+
     public function __construct(string $storageKey = '')
     {
         $this->storageKey = $storageKey;
@@ -51,28 +53,6 @@ class Memory implements StorageInterface
     }
 
     /**
-     * @return array
-     */
-    public function all() : array
-    {
-        return $this->data[$this->storageKey] ?? [];
-    }
-
-    /**
-     * @param string $field
-     * @param $value
-     * @return array
-     */
-    public function search(string $field, $value) : array
-    {
-        return array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
-            if ($entity[$field] === $value) {
-                return $entity;
-            }
-        });
-    }
-
-    /**
      * Delete data specified by id
      * If there is no such data - false returns,
      * if data has been successfully deleted - true returns.
@@ -91,13 +71,43 @@ class Memory implements StorageInterface
     }
 
     /**
+     * @param string $field
+     * @param $value
+     * @return StorageInterface
+     */
+    public function search(string $field = '', $value = null) : StorageInterface
+    {
+        if ($field === '' && is_null($value)) {
+            $this->filtered = $this->data[$this->storageKey];
+
+            return $this;
+        }
+
+        $this->filtered = array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
+            if (isset($entity[$field]) && $entity[$field] === $value) {
+                return $entity;
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function all() : array
+    {
+        return $this->filtered;
+    }
+
+    /**
      * @param int $limit
      * @param int $offset
      * @return array
      */
     public function take(int $limit, int $offset) : array
     {
-        return array_slice($this->data[$this->storageKey], $offset, $limit, true);
+        return array_slice($this->filtered, $offset, $limit, true);
     }
 
     /**
