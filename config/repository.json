@@ -19,7 +19,7 @@
     },
     {
       "name": "MODCASTS.VIDEO",
-      "description": "Специальные пакеты и сборки пакетов для сайта",
+      "description": "Специальные пакеты и сборки для сайта",
       "templated": false,
       "domains": [
         "modcasts.video.loc",
