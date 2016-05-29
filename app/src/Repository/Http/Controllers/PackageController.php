@@ -66,7 +66,7 @@ class PackageController
         }
 
         // initialize parameters
-        $query = $request->getParam('query', '');
+        $query = $request->getParam('query', ''); // ?
         $page = intval($request->getParam('page', 0));
         $limit = intval($request->getParam('limit', 10));
         $tag = $request->getParam('tag', false);
@@ -99,16 +99,39 @@ class PackageController
      */
     public function versions(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
+        $packages = [];
+
+        // может и не нужно
+
+        $response = call_user_func($this->renderer, $response, [
+            'packages' => [
+                '@attributes' => ['total' => 1],
+                'package' => array_values($packages)
+            ]
+        ]);
+
         return $response;
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface|Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
+        $signature = $request->getParam('signature');
+
+        $found = $this->repository->findBy('signature', $signature);
+        $package = PackageTransformer::transform(current($found));
+
+        $response = call_user_func($this->renderer, $response, [
+            'packages' => [
+                '@attributes' => ['total' => count($found)],
+                'package' => $package
+            ]
+        ]);
+
         return $response;
     }
 
