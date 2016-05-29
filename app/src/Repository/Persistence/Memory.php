@@ -1,54 +1,120 @@
-<?php
+<?php declare(strict_types = 1);
 
-// todo: maybe it can be replace by redis realisation?
+namespace Alroniks\Repository\Persistence;
 
-namespace Alroniks\Repository;
-
-use Alroniks\Repository\Contracts\PersistenceInterface;
+use Alroniks\Repository\Contracts\StorageInterface;
 
 /**
- * Class Memory
- * @package Alroniks\Repository
+ * Memory storage implementation
+ * @package Alroniks\Repository\Persistence
  */
-class Memory implements PersistenceInterface
+class Memory implements StorageInterface
 {
+    private $storageKey;
+
     /** @var array */
     private $data = [];
 
-    /**
-     * @param $key
-     * @param $data
-     * @param int $ttl
-     * @return mixed|void
-     */
-    public function persist($key, $data, $ttl = 0)
+    private $filtered = [];
+
+    public function __construct(string $storageKey = '')
     {
-        $this->data[$key] = $data;
-    }
-    
-    public function purge($key)
-    {
-        // TODO: Implement purge() method.
+        $this->storageKey = $storageKey;
     }
 
     /**
-     * @param $key
-     * @return mixed
+     * @param string $storageKey
      */
-    public function retrieve($key)
+    public function setStorageKey(string $storageKey)
     {
-        if (array_key_exists($key, $this->data)) {
-            return $this->data[$key];
-        }
+        $this->storageKey = $storageKey;
+    }
+
+    /**
+     * Method to persist data
+     * Returns new id for just persisted data.
+     * @param array $data
+     * @return string
+     */
+    public function persist(array $data) : string
+    {
+        $this->data[$this->storageKey][$data['id']] = $data;
+
+        return $data['id'];
     }
 
     /**
      * @param $key
      * @return array
      */
-    public function collection($key)
+    public function retrieve(string $key) : array
     {
-        return $this->data;
+        return $this->data[$this->storageKey][$key] ?? [];
     }
-    
+
+    /**
+     * Delete data specified by id
+     * If there is no such data - false returns,
+     * if data has been successfully deleted - true returns.
+     * @param string $id
+     * @return bool
+     */
+    public function delete(string $id) : bool
+    {
+        if (isset($this->data[$this->storageKey][$id])) {
+            unset($this->data[$this->storageKey][$id]);
+
+            return empty(isset($this->data[$this->storageKey][$id]));
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $field
+     * @param $value
+     * @return StorageInterface
+     */
+    public function search(string $field = '', $value = null) : StorageInterface
+    {
+        if ($field === '' && is_null($value)) {
+            $this->filtered = $this->data[$this->storageKey];
+
+            return $this;
+        }
+
+        $this->filtered = array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
+            if (isset($entity[$field]) && $entity[$field] === $value) {
+                return $entity;
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function all() : array
+    {
+        return $this->filtered;
+    }
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function take(int $limit, int $offset) : array
+    {
+        return array_slice($this->filtered, $offset, $limit, true);
+    }
+
+    /**
+     * @return int
+     */
+    public function count() : int
+    {
+        return count($this->data[$this->storageKey]);
+    }
 }

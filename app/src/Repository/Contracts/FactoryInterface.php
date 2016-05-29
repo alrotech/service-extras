@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Contracts;
 
@@ -9,8 +9,9 @@ namespace Alroniks\Repository\Contracts;
 interface FactoryInterface
 {
     /**
-     * @param $data
-     * @return mixed
+     * Creates entity from raw data
+     * @param array $raw
+     * @return EntityInterface
      */
-    public function make($data);
+    public function make(array $raw) : EntityInterface;
 }

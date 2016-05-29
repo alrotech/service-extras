@@ -1,36 +1,25 @@
-<?php
+<?php declare(strict_types = 1);
 
-namespace Alroniks\Repository;
+namespace Alroniks\Repository\Helpers;
 
 use LSS\Array2XML;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Body;
-use Slim\Http\Response;
 
 /**
  * Class Renderer
- * @package alroniks\repository
+ * @package Alroniks\Repository\Helpers
  */
 class Renderer
 {
-    protected $request;
-
-    /**
-     * Renderer constructor.
-     * @param $request
-     */
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
-
     /**
      * Render output in specified format
-     * @param Response $response
+     * @param ResponseInterface $response
      * @param array $data
      * @param string $contentType
-     * @return static
+     * @return ResponseInterface
      */
-    public function render(Response $response, array $data, $contentType = 'application/xml')
+    public function __invoke(ResponseInterface $response, array $data, string $contentType = 'application/xml') : ResponseInterface
     {
         switch ($contentType) {
             case 'application/json':

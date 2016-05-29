@@ -4,34 +4,19 @@
       "name": "Общие пакеты",
       "description": "Общедоступные пакеты для всех сайтов",
       "templated": false,
-      "domains": [],
       "categories": [
-        {
-          "name": "Коммерция"
-        },
-        {
-          "name": "Чаты"
-        },
-        {
-          "name": "Утилиты"
-        }
+        {"name": "Коммерция"},
+        {"name": "Чаты"},
+        {"name": "Утилиты"}
       ]
     },
     {
       "name": "MODCASTS.VIDEO",
-      "description": "Специальные пакеты и сборки пакетов для сайта",
+      "description": "Специальные пакеты и сборки для сайта",
       "templated": false,
-      "domains": [
-        "modcasts.video.loc",
-        "modx.loc"
-      ],
       "categories": [
-        {
-          "name": "Финансы"
-        },
-        {
-          "name": "Содержимое"
-        },
+        {"name": "Финансы"},
+        {"name": "Содержимое"},
         {
           "name": "Оформление",
           "packages": [

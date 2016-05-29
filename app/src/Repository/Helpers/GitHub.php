@@ -1,24 +1,24 @@
-<?php
+<?php declare(strict_types = 1);
 
-namespace Alroniks\Repository;
+namespace Alroniks\Repository\Helpers;
 
 /**
- * Class GitHubGateWay
- * @package Alroniks\Repository
+ * Class GitHub
+ * @package Alroniks\Repository\Helpers
  */
-class GitHubGateWay
+class GitHub
 {
     const BASE_URL = 'https://api.github.com';
 
     /**
-     * @param $url
-     * @param $owner
-     * @param $repository
+     * @param string $url
+     * @param string $owner
+     * @param string $repository
      * @param array $options
-     * @return mixed
+     * @return array
      * @throws \Exception
      */
-    public static function api($url, $owner, $repository, $options = [])
+    public static function api(string $url, string $owner, string $repository, array $options = []) : array
     {
         $key = getcwd() . "/config/$owner.key";
         if (!file_exists($key) || !is_readable($key)) {
@@ -44,7 +44,7 @@ class GitHubGateWay
         curl_close($ch);
 
         if (false !== strpos($info, 'amazonaws.com')) {
-            return $info;
+            return [$info];
         }
 
         return json_decode($result, true);

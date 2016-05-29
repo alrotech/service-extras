@@ -1,6 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Alroniks\Repository\Contracts;
+
+use Alroniks\Repository\Domain\DomainException;
+use Alroniks\Repository\Domain\RecordNotFoundException;
 
 /**
  * Interface RepositoryInterface
@@ -9,46 +12,50 @@ namespace Alroniks\Repository\Contracts;
 interface RepositoryInterface
 {
     /**
+     * RepositoryInterface constructor.
+     * @param StorageInterface $persistence
+     * @param FactoryInterface $factory
+     */
+    public function __construct(StorageInterface $persistence, FactoryInterface $factory);
+
+    /**
+     * @param EntityInterface $entity
      * @return mixed
+     * @throws DomainException
      */
-    public function all();
+    public function add(EntityInterface $entity) : EntityInterface;
+    
+    /**
+     * @param EntityInterface $entity
+     * @return bool
+     * @throws DomainException
+     */
+    public function remove(EntityInterface $entity) : bool;
 
     /**
-     * @param int $perPage
-     * @param array $columns
-     * @return mixed
+     * @param string $id
+     * @return EntityInterface
+     * @throws RecordNotFoundException
      */
-    //public function paginate($perPage = 10, $columns = ['*']);
+    public function find(string $id) : EntityInterface;
 
     /**
-     * @param DomainObjectInterface $object
+     * @return array
      */
-    public function create(DomainObjectInterface $object);
+    public function findAll() : array;
 
     /**
-     * @param DomainObjectInterface $object
-     * @param $id
-     * @return mixed
-     */
-    public function update(DomainObjectInterface $object, $id);
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id);
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function find($id);
-
-    /**
-     * @param $field
+     * @param string $field
      * @param $value
-     * @param array $columns
-     * @return mixed
+     * @return array
      */
-    public function findBy($field, $value, $columns = []);
+    public function findBy(string $field, $value) : array;
+
+    /**
+     * @param int $currentPage
+     * @param int $perPage
+     * @return array
+     */
+    public function paginate(int $currentPage, int $perPage = 10) : array;
+
 }
