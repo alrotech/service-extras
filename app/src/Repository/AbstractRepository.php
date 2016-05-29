@@ -104,18 +104,50 @@ abstract class AbstractRepository implements RepositoryInterface
         return $collection;
     }
 
+    /**
+     * @param string $field
+     * @param $value
+     * @return array
+     */
     public function findBy(string $field, $value) : array
     {
-        return 'Not implemented yet';
+        $entities = $this->getStorage()->search($field, $value) ?: [];
+
+        foreach ($entities as &$entity) {
+            $entity = $this->getFactory()->make($entity);
+        }
+
+        return $entities;
     }
 
     /**
+     * @param int $currentPage
      * @param int $perPage
-     * @return mixed
+     * @return array
      */
-    public function paginate(int $perPage = 10)
+    public function paginate(int $currentPage, int $perPage = 10) : array
     {
-        // TODO: Implement paginate() method.
-    }
+        $total = $this->getStorage()->count();
+        $totalPages = ceil($total / $perPage);
 
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $entities = $this->getStorage()->take($perPage, intval($currentPage * $perPage - $perPage));
+
+        foreach ($entities as &$entity) {
+            $entity = $this->getFactory()->make($entity);
+        }
+
+        return [
+            $entities,
+            [
+                'type' => 'array',
+                'total' => $total,
+                'page' => $currentPage,
+                'of' => $totalPages
+            ]
+        ];
+    }
 }

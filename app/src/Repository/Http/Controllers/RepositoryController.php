@@ -16,6 +16,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\NotFoundException;
+use Slim\Http\Request;
 
 /**
  * Class Repository
@@ -49,14 +50,16 @@ class RepositoryController
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface|Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws NotFoundException
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $repositories = $this->repository->findAll();
+        $page = $request->getParam('page', 1);
+
+        list($repositories, $pagination) = $this->repository->paginate($page);
 
         if (!count($repositories)) {
             throw new NotFoundException($request, $response);
@@ -69,12 +72,7 @@ class RepositoryController
         /** @var ResponseInterface $response */
         $response = call_user_func($this->renderer, $response, [
             'repositories' => [
-                '@attributes' => [
-                    'type' => 'array',
-                    'total' => count($repositories),
-                    'page' => 1, // todo: need calculate it
-                    'of' => 1,
-                ],
+                '@attributes' => $pagination,
                 'repository' => $repositories
             ]
         ]);
@@ -103,7 +101,7 @@ class RepositoryController
         $persistence->setStorageKey(Category::class);
 
         $categories = new Categories($persistence, new CategoryFactory());
-        $categories = $categories->findBy('repository', $repository);
+        $categories = $categories->findBy('repository', $repository->getId());
         
         foreach ($categories as &$category) {
             $category = CategoryTransformer::transform($category);

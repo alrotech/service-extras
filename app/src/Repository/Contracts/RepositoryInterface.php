@@ -52,9 +52,10 @@ interface RepositoryInterface
     public function findBy(string $field, $value) : array;
 
     /**
+     * @param int $currentPage
      * @param int $perPage
-     * @return mixed
+     * @return array
      */
-    public function paginate(int $perPage = 10);
+    public function paginate(int $currentPage, int $perPage = 10) : array;
 
 }

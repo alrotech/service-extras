@@ -22,5 +22,5 @@ class Packages extends AbstractRepository implements RepositoryInterface
 
         return $storage;
     }
-    
+
 }
