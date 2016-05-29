@@ -57,7 +57,7 @@ class RepositoryController
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $page = $request->getParam('page', 1);
+        $page = intval($request->getParam('page', 1));
 
         list($repositories, $pagination) = $this->repository->paginate($page);
 
@@ -73,7 +73,7 @@ class RepositoryController
         $response = call_user_func($this->renderer, $response, [
             'repositories' => [
                 '@attributes' => $pagination,
-                'repository' => $repositories
+                'repository' => array_values($repositories)
             ]
         ]);
 
