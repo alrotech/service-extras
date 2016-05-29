@@ -44,7 +44,7 @@ class GitHub
         curl_close($ch);
 
         if (false !== strpos($info, 'amazonaws.com')) {
-            return $info;
+            return [$info];
         }
 
         return json_decode($result, true);
