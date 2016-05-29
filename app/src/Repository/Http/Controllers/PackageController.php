@@ -13,6 +13,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\NotFoundException;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Stream;
 
@@ -48,68 +49,54 @@ class PackageController
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface|Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws NotFoundException
      */
     public function search(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        // search package by signature!!!
-        //$signature = $request->getParam('signature', '');
-        // getting info about package
-        //$package = $this->packageStorage->findBy('signature', $signature);
+        // search info about package by signature
+        $signature = $request->getParam('signature', '');
+        if ($signature) {
+            $package = current($this->repository->findBy('signature', $signature));
 
-        // сделать поиск по сигнатуре
-        // отрефакторить стораджи для поиска по любому полю
-        // добавить реализацию пагинации
-        // добавить сортировку, если указана
+            /** @var Response $response */
+            $response = call_user_func($this->renderer, $response, [
+                'package' => PackageTransformer::transform($package)
+            ]);
 
+            return $response->withStatus(200);
+        }
 
-        // потом
-        // добавить middleware для проверки версии MODX и других параметров, чтобы показывать только совместимые пакеты
-        // добавить middleware для проверки авторизации и доступа к определенным пакетам и репозиториям
-
-
-        $query = $request->getParam('query', false); // ??
-
+        // initialize parameters
+        $query = $request->getParam('query', '');
+        $page = intval($request->getParam('page', 0));
+        $limit = intval($request->getParam('limit', 10));
         $tag = $request->getParam('tag', false);
 
-        // $sorter = $request->getParam('sorter', false);
-
-        $start = $request->getParam('start', 0);
-        $limit = $request->getParam('limit', 10);
-
-        // filtering by tag
+        if ($tag) {
+            $packages = $this->repository->findBy('category', $tag);
+        }
+        
+        // непонятно как добавить пагинацию и фильтрацию
+        
 //        if ($tag) {
-//            // todo: replace by universal findBy
-//
 //            $packages = $this->packageStorage->findByCategory($tag);
 //        } else {
 //            $packages = $this->packageStorage->all();
 //        }
 
-        $this->repository->add((new PackageFactory())->make([]));
-
-        $packages = $this->repository->findAll();
-
-        if (!count($packages)) {
-            throw new NotFoundException($request, $response);
-        }
+        list($packages, $pagination) = $this->repository->paginate($page, $limit);
 
         foreach ($packages as &$package) {
             $package = PackageTransformer::transform($package);
         }
 
         /** @var Response $response */
-        $response = $this->renderer($response, [
+        $response = call_user_func($this->renderer, $response, [
             'packages' => [
-                '@attributes' => [
-                    'type' => 'array',
-                    'total' => 1,
-                    'page' => 1,
-                    'of' => 1,
-                ],
+                '@attributes' => $pagination,
                 'package' => $packages
             ]
         ]);

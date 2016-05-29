@@ -45,9 +45,9 @@ interface StorageInterface
     /**
      * @param string $field
      * @param $value
-     * @return array
+     * @return StorageInterface
      */
-    public function search(string $field, $value) : array;
+    public function search(string $field = '', $value = null) : StorageInterface;
 
     /**
      * Delete data specified by id

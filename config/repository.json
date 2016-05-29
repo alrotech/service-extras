@@ -6,15 +6,9 @@
       "templated": false,
       "domains": [],
       "categories": [
-        {
-          "name": "Коммерция"
-        },
-        {
-          "name": "Чаты"
-        },
-        {
-          "name": "Утилиты"
-        }
+        {"name": "Коммерция"},
+        {"name": "Чаты"},
+        {"name": "Утилиты"}
       ]
     },
     {
@@ -26,12 +20,8 @@
         "modx.loc"
       ],
       "categories": [
-        {
-          "name": "Финансы"
-        },
-        {
-          "name": "Содержимое"
-        },
+        {"name": "Финансы"},
+        {"name": "Содержимое"},
         {
           "name": "Оформление",
           "packages": [
@@ -39,6 +29,25 @@
           ]
         }
       ]
-    }
+    },
+    { "name": "test1", "description": "test1", "templated": false },
+    { "name": "test2", "description": "test2", "templated": false },
+    { "name": "test3", "description": "test3", "templated": false },
+    { "name": "test4", "description": "test4", "templated": false },
+    { "name": "test5", "description": "test5", "templated": false },
+    { "name": "test6", "description": "test6", "templated": false },
+    { "name": "test7", "description": "test7", "templated": false },
+    { "name": "test8", "description": "test8", "templated": false },
+    { "name": "test9", "description": "test9", "templated": false },
+    { "name": "test10", "description": "test10", "templated": false },
+    { "name": "test11", "description": "test11", "templated": false },
+    { "name": "test12", "description": "test12", "templated": false },
+    { "name": "test13", "description": "test13", "templated": false },
+    { "name": "test14", "description": "test14", "templated": false },
+    { "name": "test15", "description": "test15", "templated": false },
+    { "name": "test16", "description": "test16", "templated": false },
+    { "name": "test17", "description": "test17", "templated": false },
+    { "name": "test18", "description": "test18", "templated": false },
+    { "name": "test19", "description": "test19", "templated": false }
   ]
 }

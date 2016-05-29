@@ -57,13 +57,10 @@ class RepositoryController
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $page = intval($request->getParam('page', 1));
-
-        list($repositories, $pagination) = $this->repository->paginate($page);
-
-        if (!count($repositories)) {
-            throw new NotFoundException($request, $response);
-        }
+        $page = intval($request->getParam('page', 0));
+        
+        $pagination = $this->repository->paginate($page);
+        $repositories = $this->repository->findAll();
 
         foreach ($repositories as &$repository) {
             $repository = RepositoryTransformer::transform($repository);
@@ -111,7 +108,7 @@ class RepositoryController
         $response = call_user_func($this->renderer, $response, [
             'repository' => array_merge(
                 RepositoryTransformer::transform($repository),
-                ['tag' => $categories]
+                ['tag' => array_values($categories)]
             )
         ]);
 
