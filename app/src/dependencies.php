@@ -27,10 +27,6 @@ $container['repository'] = function (ContainerInterface $container) {
 };
 
 // Controllers
-$container[TestController::class] = function (ContainerInterface $container) {
-    return new TestController($container);
-};
-
 $container[HomeController::class] = function (ContainerInterface $container) {
     return new HomeController($container);
 };

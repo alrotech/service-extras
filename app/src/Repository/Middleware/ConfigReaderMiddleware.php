@@ -56,14 +56,6 @@ class ConfigReaderMiddleware
         /** @var \stdClass $repositoryConfig */
         foreach ($this->config->repositories as $repositoryConfig) {
 
-            // not show this repository if domain are not allowed
-            if (!empty($repositoryConfig->domains)) {
-                /** @var Request $request */
-                if (!in_array($request->getParam('http_host'), $repositoryConfig->domains)) {
-                    continue;
-                }
-            }
-            
             $repositoryId = call_user_func(new Originality, $repositoryConfig->name);
 
             try {
@@ -107,7 +99,7 @@ class ConfigReaderMiddleware
                     $packageId = call_user_func(new Originality, $categoryId . $packageLink);
 
                     try {
-                        $package = $packages->find($packageId);
+                        $packages->find($packageId);
                     } catch (RecordNotFoundException $e) {
                         $meta = $this->fetchPackageMeta($packageLink);
 
@@ -115,7 +107,7 @@ class ConfigReaderMiddleware
                             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
                             ->pathFor('package-download', ['id' => $packageId]);
 
-                        $package = $packages->add((new PackageFactory())->make([
+                        $packages->add((new PackageFactory())->make([
                             'category' => $category,
                             'id' => $packageId,
                             'name' => $meta['name'],

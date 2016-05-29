@@ -40,11 +40,7 @@ class PackageController
     {
         $this->container = $container;
 
-        /** @var StorageInterface $persistence */
-        $persistence = $container->get('persistence');
-        $persistence->setStorageKey(Package::class);
-
-        $this->repository = new Packages($persistence, new PackageFactory());
+        $this->repository = new Packages($container->get('persistence'), new PackageFactory());
         $this->renderer = $this->container->get('renderer');
     }
 
@@ -75,19 +71,11 @@ class PackageController
         $limit = intval($request->getParam('limit', 10));
         $tag = $request->getParam('tag', false);
 
-        if ($tag) {
-            $packages = $this->repository->findBy('category', $tag);
-        }
-        
-        // непонятно как добавить пагинацию и фильтрацию
-        
-//        if ($tag) {
-//            $packages = $this->packageStorage->findByCategory($tag);
-//        } else {
-//            $packages = $this->packageStorage->all();
-//        }
+        $pagination = $this->repository->paginate($page, $limit);
 
-        list($packages, $pagination) = $this->repository->paginate($page, $limit);
+        $packages = $tag
+            ? $this->repository->findBy('category', $tag)
+            : $this->repository->findAll();
 
         foreach ($packages as &$package) {
             $package = PackageTransformer::transform($package);
@@ -97,7 +85,7 @@ class PackageController
         $response = call_user_func($this->renderer, $response, [
             'packages' => [
                 '@attributes' => $pagination,
-                'package' => $packages
+                'package' => array_values($packages)
             ]
         ]);
 
@@ -151,11 +139,14 @@ class PackageController
             CURLOPT_FOLLOWLOCATION => true
         ]);
         
-        $encodedLink = base64_encode($result);
-        
-        return $this->container->get('router')
+        $encodedLink = base64_encode(current($result));
+
+        $body = $response->getBody();
+        $body->write($this->container->get('router')
             ->setBasePath(join('://', [$request->getUri()->getScheme(), $request->getUri()->getAuthority()]))
-            ->pathFor('package-direct-link', ['link' => $encodedLink]);
+            ->pathFor('package-direct-link', ['link' => $encodedLink]));
+
+        return $response->withBody($body)->withStatus(200);
     }
 
     /**

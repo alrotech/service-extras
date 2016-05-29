@@ -40,12 +40,8 @@ class RepositoryController
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        
-        /** @var StorageInterface $persistence */
-        $persistence = $container->get('persistence');
-        $persistence->setStorageKey(Repository::class);
-        
-        $this->repository = new Repositories($persistence, new RepositoryFactory());
+
+        $this->repository = new Repositories($container->get('persistence'), new RepositoryFactory());
         $this->renderer = $this->container->get('renderer');
     }
 
@@ -93,11 +89,7 @@ class RepositoryController
             throw new NotFoundException($request, $response);
         }
 
-        /** @var StorageInterface $persistence */
-        $persistence = $this->container->get('persistence');
-        $persistence->setStorageKey(Category::class);
-
-        $categories = new Categories($persistence, new CategoryFactory());
+        $categories = new Categories($this->container->get('persistence'), new CategoryFactory());
         $categories = $categories->findBy('repository', $repository->getId());
         
         foreach ($categories as &$category) {
