@@ -117,12 +117,19 @@ class PackageController
      * @param ServerRequestInterface|Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     * @throws NotFoundException
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         $signature = $request->getParam('signature');
+        $name = current(explode('-', $signature));
 
-        $found = $this->repository->findBy('signature', $signature);
+        $found = $this->repository->findBy('name', $name);
+
+        if (!count($found)) {
+            throw new NotFoundException($request, $response);
+        }
+
         $package = PackageTransformer::transform(current($found));
 
         $response = call_user_func($this->renderer, $response, [
