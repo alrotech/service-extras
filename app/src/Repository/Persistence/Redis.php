@@ -20,6 +20,8 @@ class Redis implements StorageInterface
     /** @var Client */
     private $client = null;
 
+    private $searcher = null;
+
     /**
      * RedisPersistence constructor.
      * @param array $config
@@ -91,6 +93,7 @@ class Redis implements StorageInterface
      */
     public function delete(string $id) : bool
     {
+        // добавить удаление из индекса
         return $this->client->zrem($this->config['key.sequence'], $id) && $this->client->del($id);
     }
 
@@ -101,17 +104,15 @@ class Redis implements StorageInterface
      */
     public function search(string $field = '', $value = null) : StorageInterface
     {
-//        if ($field === '' && is_null($value)) {
-//            $this->filtered = $this->data[$this->key.storage];
-//
-//            return $this;
-//        }
+        if (($field === '' && is_null($value))
+            || ($field && !in_array($field, $this->config['fields']))
+        ) {
+            $this->searcher = $this->config['key.sequence'];
 
-//        $this->filtered = array_filter($this->data[$this->key.storage], function ($entity) use ($field, $value) {
-//            if (isset($entity[$field]) && $entity[$field] === $value) {
-//                return $entity;
-//            }
-//        });
+            return $this;
+        }
+
+        $this->searcher = join(':', [$field, $value]);
 
         return $this;
     }
@@ -122,7 +123,7 @@ class Redis implements StorageInterface
      */
     public function all() : array
     {
-        return $this->retrieveCollection($this->client->zrange($this->config['key.sequence'], 0, -1));
+        return $this->retrieveCollection($this->doSearch(0, -1));
     }
 
     /**
@@ -132,7 +133,7 @@ class Redis implements StorageInterface
      */
     public function take(int $limit, int $offset) : array
     {
-        return $this->retrieveCollection($this->client->zrange($this->config['key.sequence'], $offset, $offset + $limit));
+        return $this->retrieveCollection($this->doSearch($offset, $offset + $limit));
     }
 
     /**
@@ -154,5 +155,15 @@ class Redis implements StorageInterface
         }
 
         return $collection;
+    }
+
+    /**
+     * @param int $start
+     * @param int $end
+     * @return array
+     */
+    private function doSearch(int $start, int $end): array
+    {
+        return $this->client->zrange($this->searcher, $start, $end);
     }
 }
