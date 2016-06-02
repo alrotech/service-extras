@@ -1,12 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Alroniks\Repository\Domain\Persistence;
+namespace Alroniks\Repository\Persistence;
 
 use Alroniks\Repository\Contracts\StorageInterface;
 use Predis\Client;
-
-
-// auto check which key use base on class
 
 /**
  * Class Redis
@@ -14,14 +11,21 @@ use Predis\Client;
  */
 class Redis implements StorageInterface
 {
+    private $storageKey;
+
+    private $sequenceKey;
+    
     /** @var Client */
     private $client = null;
 
     /**
      * RedisPersistence constructor.
+     * @param string $storageKey
      */
-    public function __construct()
+    public function __construct(string $storageKey = '')
     {
+        $this->setStorageKey($storageKey);
+
         $this->client = new Client([
             'host'     => '127.0.0.1',
             'port'     => 6379,
@@ -30,76 +34,109 @@ class Redis implements StorageInterface
     }
 
     /**
+     * @param string $storageKey
+     */
+    public function setStorageKey(string $storageKey)
+    {
+        $this->storageKey = $storageKey;
+        $this->sequenceKey = $this->storageKey . ':sequence';
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     */
+    public function persist(array $data) : string
+    {
+        $key = join(':', [$this->storageKey, $data['id']]);
+
+        $this->client->hmset($key, $data);
+
+        $total = $this->count();
+        $this->client->zadd($this->sequenceKey, $total++, $data['id']);
+
+        return $data['id'];
+    }
+
+    /**
      * @param $key
      * @return array
      */
-    public function retrieve($key)
+    public function retrieve(string $key) : array
     {
-        return $this->client->hgetall($key);
+        $key = join(':', [$this->storageKey, $key]);
+
+        return $this->client->hgetall($key) ?? [];
     }
 
     /**
-     * @param $key
+     * @param string $id
+     * @return bool
+     */
+    public function delete(string $id) : bool
+    {
+        return $this->client->zrem($this->sequenceKey, $id) && $this->client->del($id);
+    }
+
+    /**
+     * @param string $field
+     * @param null $value
+     * @return StorageInterface
+     */
+    public function search(string $field = '', $value = null) : StorageInterface
+    {
+//        if ($field === '' && is_null($value)) {
+//            $this->filtered = $this->data[$this->storageKey];
+//
+//            return $this;
+//        }
+
+//        $this->filtered = array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
+//            if (isset($entity[$field]) && $entity[$field] === $value) {
+//                return $entity;
+//            }
+//        });
+
+        return $this;
+    }
+
+    /**
+     * Returns all available entries
+     * @return array
+     */
+    public function all() : array
+    {
+        return $this->retrieveCollection($this->client->zrange($this->sequenceKey, 0, -1));
+    }
+
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function take(int $limit, int $offset) : array
+    {
+        return $this->retrieveCollection($this->client->zrange($this->sequenceKey, $offset, $offset + $limit));
+    }
+
+    /**
      * @return int
      */
-    public function purge($key)
+    public function count() : int
     {
-        return $this->client->del($key);
+        return $this->client->zcard($this->sequenceKey);
     }
 
     /**
-     * @param $key
-     * @param $data
-     * @param int $ttl
-     * @return boolean
+     * @param array $collection
+     * @return array
      */
-//    public function persist($key, $data, $ttl = 0)
-//    {
-//        if ($this->client->hmset($key, $data)) {
-//            if ($ttl) {
-//                $this->client->expire($key, $ttl);
-//            }
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-    public function persist($data)
+    private function retrieveCollection(array $collection): array
     {
-        // TODO: Implement persist() method.
-    }
-
-    /**
-     * @param $key
-     * @return string
-     */
-    public function collection($key)
-    {
-        $keys = $this->client->keys($key);
-        foreach ($keys as &$k) {
-            $k = $this->client->hgetall($k);
+        foreach ($collection as &$item) {
+            $item = $this->retrieve($item);
         }
 
-        return $keys;
-    }
-
-    /**
-     * @param $key
-     * @return int
-     */
-    public function exists($key)
-    {
-        return $this->client->exists($key);
-    }
-
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function delete($key)
-    {
-        // TODO: Implement delete() method.
+        return $collection;
     }
 }

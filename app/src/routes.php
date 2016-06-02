@@ -40,3 +40,7 @@ $app->get('/package/download/{id:[0-9a-z]+}', [$container[PackageController::cla
 # to request, that brake signature of query string to file and causes an error
 $app->get('/package/direct/{link}', [$container[PackageController::class], 'direct'])
     ->setName('package-direct-link');
+
+# url that can be fetched by external services for resetting cache data for this package
+$app->get('/package/reset', [$container[PackageController::class], 'reset'])
+    ->setName('package-reset');

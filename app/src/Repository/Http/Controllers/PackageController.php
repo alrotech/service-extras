@@ -2,7 +2,6 @@
 
 namespace Alroniks\Repository\Http\Controllers;
 
-use Alroniks\Repository\Contracts\StorageInterface;
 use Alroniks\Repository\Domain\Package\Package;
 use Alroniks\Repository\Domain\Package\PackageFactory;
 use Alroniks\Repository\Domain\Package\Packages;
@@ -66,7 +65,10 @@ class PackageController
         }
 
         // initialize parameters
-        $query = $request->getParam('query', ''); // ?
+        // TODO: вот тут нужно все таки сделать поиск еще и нечеткому имени, как-то через %% что ли
+        // поиск только в name
+        $query = $request->getParam('query', '');
+
         $page = intval($request->getParam('page', 0));
         $limit = intval($request->getParam('limit', 10));
         $tag = $request->getParam('tag', false);
@@ -99,18 +101,7 @@ class PackageController
      */
     public function versions(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        $packages = [];
-
-        // может и не нужно
-
-        $response = call_user_func($this->renderer, $response, [
-            'packages' => [
-                '@attributes' => ['total' => 1],
-                'package' => array_values($packages)
-            ]
-        ]);
-
-        return $response;
+        return $this->update($request, $response);
     }
 
     /**
@@ -121,6 +112,9 @@ class PackageController
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
+
+        // TODO: нужно все таки проверять, что есть новее версии, иначе кнопка обновить горит всегда
+
         $signature = $request->getParam('signature');
         $name = current(explode('-', $signature));
 

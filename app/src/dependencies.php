@@ -18,7 +18,7 @@ $container['renderer'] = function (ContainerInterface $container) {
 
 // load persistence implementation
 $container['persistence'] = function (ContainerInterface $container) {
-    return new \Alroniks\Repository\Persistence\Memory();
+    return new \Alroniks\Repository\Persistence\Redis();
 };
 
 // Repository initializer (configuration reader & loader)
