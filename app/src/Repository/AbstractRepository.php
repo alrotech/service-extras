@@ -31,6 +31,8 @@ abstract class AbstractRepository implements RepositoryInterface
 
     private $limit = null;
 
+    protected $searchable = ['name'];
+
     /**
      * AbstractRepository constructor.
      * @param StorageInterface $persistence
@@ -117,6 +119,10 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function findBy(string $field, $value) : array
     {
+        if (!in_array($field, $this->searchable)) {
+            return [];
+        }
+        
         $entities = $this->limit && $this->offset
             ? $this->getStorage()->search($field, $value)->take($this->limit, $this->offset)
             : $this->getStorage()->search($field, $value)->all();

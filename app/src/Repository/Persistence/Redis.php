@@ -11,20 +11,23 @@ use Predis\Client;
  */
 class Redis implements StorageInterface
 {
-    private $storageKey;
-
-    private $sequenceKey;
+    private $config = [
+        'key.storage' => '',
+        'key.sequence' => '',
+        'fields' => []
+    ];
     
     /** @var Client */
     private $client = null;
 
     /**
      * RedisPersistence constructor.
-     * @param string $storageKey
+     * @param array $config
+     * @internal param string $key.storage
      */
-    public function __construct(string $storageKey = '')
+    public function __construct(array $config = [])
     {
-        $this->setStorageKey($storageKey);
+        $this->setConfig($config);
 
         $this->client = new Client([
             'host'     => '127.0.0.1',
@@ -34,12 +37,17 @@ class Redis implements StorageInterface
     }
 
     /**
-     * @param string $storageKey
+     * @param array $config
+     * @internal param string $key.storage
      */
-    public function setStorageKey(string $storageKey)
+    public function setConfig(array $config)
     {
-        $this->storageKey = $storageKey;
-        $this->sequenceKey = $this->storageKey . ':sequence';
+        if (!empty($config['key.storage'])) {
+            $config['key.sequence'] = $config['key.sequence']
+                ?? $config['key.storage'] . ':sequence';
+        }
+
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -48,12 +56,20 @@ class Redis implements StorageInterface
      */
     public function persist(array $data) : string
     {
-        $key = join(':', [$this->storageKey, $data['id']]);
+        $key = join(':', [$this->config['key.storage'], $data['id']]);
 
         $this->client->hmset($key, $data);
 
+        $additional = array_intersect($this->config['fields'], array_keys($data));
+        foreach ($additional as $field) {
+            $value = $data[$field];
+            $k = join(':', [$field, $value]);
+            $this->client->zadd($k, 0, $data['id']);
+        }
+
         $total = $this->count();
-        $this->client->zadd($this->sequenceKey, $total++, $data['id']);
+        $rank = $data['rank'] ?? $total++;
+        $this->client->zadd($this->config['key.sequence'], $rank, $data['id']);
 
         return $data['id'];
     }
@@ -64,7 +80,7 @@ class Redis implements StorageInterface
      */
     public function retrieve(string $key) : array
     {
-        $key = join(':', [$this->storageKey, $key]);
+        $key = join(':', [$this->config['key.storage'], $key]);
 
         return $this->client->hgetall($key) ?? [];
     }
@@ -75,7 +91,7 @@ class Redis implements StorageInterface
      */
     public function delete(string $id) : bool
     {
-        return $this->client->zrem($this->sequenceKey, $id) && $this->client->del($id);
+        return $this->client->zrem($this->config['key.sequence'], $id) && $this->client->del($id);
     }
 
     /**
@@ -86,12 +102,12 @@ class Redis implements StorageInterface
     public function search(string $field = '', $value = null) : StorageInterface
     {
 //        if ($field === '' && is_null($value)) {
-//            $this->filtered = $this->data[$this->storageKey];
+//            $this->filtered = $this->data[$this->key.storage];
 //
 //            return $this;
 //        }
 
-//        $this->filtered = array_filter($this->data[$this->storageKey], function ($entity) use ($field, $value) {
+//        $this->filtered = array_filter($this->data[$this->key.storage], function ($entity) use ($field, $value) {
 //            if (isset($entity[$field]) && $entity[$field] === $value) {
 //                return $entity;
 //            }
@@ -106,7 +122,7 @@ class Redis implements StorageInterface
      */
     public function all() : array
     {
-        return $this->retrieveCollection($this->client->zrange($this->sequenceKey, 0, -1));
+        return $this->retrieveCollection($this->client->zrange($this->config['key.sequence'], 0, -1));
     }
 
     /**
@@ -116,7 +132,7 @@ class Redis implements StorageInterface
      */
     public function take(int $limit, int $offset) : array
     {
-        return $this->retrieveCollection($this->client->zrange($this->sequenceKey, $offset, $offset + $limit));
+        return $this->retrieveCollection($this->client->zrange($this->config['key.sequence'], $offset, $offset + $limit));
     }
 
     /**
@@ -124,7 +140,7 @@ class Redis implements StorageInterface
      */
     public function count() : int
     {
-        return $this->client->zcard($this->sequenceKey);
+        return $this->client->zcard($this->config['key.sequence']);
     }
 
     /**

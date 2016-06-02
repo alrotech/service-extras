@@ -18,13 +18,18 @@ use Alroniks\Repository\Contracts\StorageInterface;
  */
 class Repositories extends AbstractRepository implements RepositoryInterface
 {
+    protected $searchable = [];
+
     /**
      * @return StorageInterface
      */
     protected function getStorage() : StorageInterface
     {
         $storage = parent::getStorage();
-        $storage->setStorageKey(Repository::class);
+        $storage->setConfig([
+            'key.storage' => strtoupper((new \ReflectionClass(Repository::class))->getShortName()),
+            'fields' => $this->searchable
+        ]);
 
         return $storage;
     }

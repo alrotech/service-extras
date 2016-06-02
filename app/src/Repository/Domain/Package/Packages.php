@@ -12,13 +12,20 @@ use Alroniks\Repository\Contracts\StorageInterface;
  */
 class Packages extends AbstractRepository implements RepositoryInterface
 {
+    protected $searchable = [
+        'name', 'category', 'repository'
+    ];
+
     /**
      * @return StorageInterface
      */
     protected function getStorage() : StorageInterface
     {
         $storage = parent::getStorage();
-        $storage->setStorageKey(Package::class);
+        $storage->setConfig([
+            'key.storage' => strtoupper((new \ReflectionClass(Package::class))->getShortName()),
+            'fields' => $this->searchable
+        ]);
 
         return $storage;
     }

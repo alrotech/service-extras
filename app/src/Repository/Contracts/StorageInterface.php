@@ -10,15 +10,15 @@ interface StorageInterface
 {
     /**
      * StorageInterface constructor.
-     * @param string $storageKey
+     * @param array $config
+     * @internal param string $storageKey
      */
-    public function __construct(string $storageKey);
+    public function __construct(array $config = []);
 
     /**
-     * @param string $storageKey
-     * @return void
+     * @param array $config
      */
-    public function setStorageKey(string $storageKey);
+    public function setConfig(array $config);
 
     /**
      * Method to persist data
