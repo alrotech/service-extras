@@ -13,7 +13,7 @@ use Alroniks\Repository\Contracts\StorageInterface;
 class Packages extends AbstractRepository implements RepositoryInterface
 {
     protected $searchable = [
-        'name', 'category', 'repository'
+        'name', 'signature', 'category', 'repository'
     ];
 
     /**

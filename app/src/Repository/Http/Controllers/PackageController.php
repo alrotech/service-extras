@@ -56,6 +56,10 @@ class PackageController
         if ($signature) {
             $package = current($this->repository->findBy('signature', $signature));
 
+            if (!$package) {
+                throw new NotFoundException($request, $response);
+            }
+
             /** @var Response $response */
             $response = call_user_func($this->renderer, $response, [
                 'package' => PackageTransformer::transform($package)
@@ -112,24 +116,26 @@ class PackageController
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-
-        // TODO: нужно все таки проверять, что есть новее версии, иначе кнопка обновить горит всегда
-
         $signature = $request->getParam('signature');
-        $name = current(explode('-', $signature));
+        list($name, $version) = explode('-', $signature);
 
-        $found = $this->repository->findBy('name', $name);
+        $version = intval(str_replace('.', '', $version));
+        
+        /** @var Package $package */
+        $package = current($this->repository->findBy('name', $name));
 
-        if (!count($found)) {
+        if (!$package) {
             throw new NotFoundException($request, $response);
         }
 
-        $package = PackageTransformer::transform(current($found));
+        if ($version >= intval(str_replace('.', '', $package->getVersion()))) {
+            throw new NotFoundException($request, $response);
+        }
 
         $response = call_user_func($this->renderer, $response, [
             'packages' => [
-                '@attributes' => ['total' => count($found)],
-                'package' => $package
+                '@attributes' => ['total' => 1],
+                'package' => PackageTransformer::transform($package)
             ]
         ]);
 
