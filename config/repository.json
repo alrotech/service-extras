@@ -1,24 +1,19 @@
 {
   "repositories": [
     {
-      "name": "Общие пакеты",
-      "description": "Общедоступные пакеты для всех сайтов",
-      "templated": false,
-      "categories": [
-        {"name": "Коммерция"},
-        {"name": "Чаты"},
-        {"name": "Утилиты"}
-      ]
-    },
-    {
       "name": "MODCASTS.VIDEO",
-      "description": "Специальные пакеты и сборки для сайта",
+      "description": "Специальные пакеты и сборки для этого сайта",
       "templated": false,
       "categories": [
         {"name": "Финансы"},
-        {"name": "Содержимое"},
         {
-          "name": "Оформление",
+          "name": "Содержимое",
+          "packages": [
+            "https://github.com/Alroniks/modx-videocast"
+          ]
+        },
+        {
+          "name": "Темы сайта",
           "packages": [
             "https://github.com/Alroniks/mdv-theme"
           ]
