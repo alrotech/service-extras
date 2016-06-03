@@ -21,6 +21,10 @@ task('php:restart', function () {
     run('sudo /usr/sbin/service php7.0-fpm restart');
 })->desc('Restart PHP-FPM service');
 
+task('cache:flush', function () {
+    run('redis-cli -n 1 flushall');
+});
+
 after('success', 'php:restart');
 
 after('deploy:update_code', 'deploy:shared');
