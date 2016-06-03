@@ -124,12 +124,19 @@ class PackageController
         /** @var Package $package */
         $package = current($this->repository->findBy('name', $name));
 
+        $error = ['error' => [
+            'status' => 404,
+            'property' => 'signature',
+            'message' => 'Package not found.',
+            'description' => "A package with the signature {$signature} was not found."
+        ]];
+
         if (!$package) {
-            throw new NotFoundException($request, $response);
+            return call_user_func($this->renderer, $response, $error);
         }
 
         if ($version >= intval(str_replace('.', '', $package->getVersion()))) {
-            throw new NotFoundException($request, $response);
+            return call_user_func($this->renderer, $response, $error);
         }
 
         $response = call_user_func($this->renderer, $response, [

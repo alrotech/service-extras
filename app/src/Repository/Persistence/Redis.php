@@ -25,7 +25,6 @@ class Redis implements StorageInterface
     /**
      * RedisPersistence constructor.
      * @param array $config
-     * @internal param string $key.storage
      */
     public function __construct(array $config = [])
     {
