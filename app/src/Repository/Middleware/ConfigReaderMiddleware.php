@@ -151,6 +151,8 @@ class ConfigReaderMiddleware
 
         $instructions = GitHub::api('/repos/:owner/:repo/contents/meta/readme.txt', $owner, $repository);
         $changeLog = GitHub::api('/repos/:owner/:repo/contents/meta/changelog.txt', $owner, $repository);
+        $cover = GitHub::api('/repos/:owner/:repo/contents/meta/cover.png', $owner, $repository);
+        $thumb = GitHub::api('/repos/:owner/:repo/contents/meta/thumb.png', $owner, $repository);
 
         $release = GitHub::api('/repos/:owner/:repo/releases/latest', $owner, $repository);
 
@@ -173,8 +175,8 @@ class ConfigReaderMiddleware
             'createdon' => $release['created_at'] ?? '',
             'editedon' => $release['created_at'] ?? '',
             'releasedon' => $release['published_at'] ?? '',
-            'cover' => $packageMeta->screenshot,
-            'thumb' => $packageMeta->thumbnail,
+            'cover' => $cover['download_url'] ?? '',
+            'thumb' => $thumb['download_url'] ?? '',
             'minimum' => $packageMeta->support->modx,
             'maximum' => 10000000,
             'databases' => join(', ', $packageMeta->support->db),
