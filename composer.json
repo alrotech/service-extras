@@ -19,7 +19,8 @@
     "require": {
         "slim/slim": "^3.4",
         "openlss/lib-array2xml": "^0.0.10",
-        "predis/predis": "^1.0"
+        "predis/predis": "^1.0",
+        "deployer/deployer": "^3.2"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
