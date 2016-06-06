@@ -26,8 +26,6 @@ class RepositoryTransformer implements TransformerInterface
             ];
         }
 
-        $output['packages'] = 19; // todo
-
         ksort($output);
 
         return $output;

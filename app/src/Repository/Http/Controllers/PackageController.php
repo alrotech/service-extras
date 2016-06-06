@@ -150,6 +150,38 @@ class PackageController
     }
 
     /**
+     * @param ServerRequestInterface|Request $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function reset(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    {
+        $token = $request->getAttribute('token');
+
+        $tokenStorage = 'config/token.key';
+
+        if (!is_readable($tokenStorage) || trim(file_get_contents('config/token.key')) === '' || trim(file_get_contents('config/token.key')) !== $token) {
+            return $response->withStatus(403, 'Access denied.');
+        }
+
+        $payload = json_decode($request->getBody()->getContents(), true);
+
+        $githublink = $payload['repository']['html_url'] ?? '';
+
+        if ($githublink === '') {
+            return $response->withStatus(400, 'Link to repository not found in payload.');
+        }
+
+        if (!$package = $this->repository->findBy('githublink', $githublink)) {
+            return $response->withStatus(404, 'Package not found.');
+        }
+
+        $this->repository->remove(current($package));
+
+        return $response->withStatus(200, 'Successfully reset.');
+    }
+
+    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface

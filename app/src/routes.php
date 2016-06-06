@@ -42,5 +42,5 @@ $app->get('/package/direct/{link}', [$container[PackageController::class], 'dire
     ->setName('package-direct-link');
 
 # url that can be fetched by external services for resetting cache data for this package
-$app->get('/package/reset', [$container[PackageController::class], 'reset'])
+$app->post('/package/reset/{token:[0-9a-z]+}', [$container[PackageController::class], 'reset'])
     ->setName('package-reset');

@@ -92,8 +92,10 @@ class Redis implements StorageInterface
      */
     public function delete(string $id) : bool
     {
-        // добавить удаление из индекса
-        return $this->client->zrem($this->config['key.sequence'], $id) && $this->client->del($id);
+        $key = join(':', [$this->config['key.storage'], $id]);
+
+        return $this->client->zrem($this->config['key.sequence'], $id)
+        && $this->client->del($key);
     }
 
     /**

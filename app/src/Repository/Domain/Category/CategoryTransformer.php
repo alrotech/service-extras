@@ -21,7 +21,6 @@ class CategoryTransformer implements TransformerInterface
         $output = $entity->toArray();
 
         unset($output['repository']);
-        $output['packages'] = 10; // todo
 
         ksort($output);
 
