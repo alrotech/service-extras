@@ -8,6 +8,7 @@ use Alroniks\Repository\Domain\Package\Packages;
 use Alroniks\Repository\Domain\Package\PackageTransformer;
 use Alroniks\Repository\Domain\RecordNotFoundException;
 use Alroniks\Repository\Helpers\GitHub;
+use Alroniks\Repository\Middleware\ConfigReaderMiddleware;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -177,6 +178,9 @@ class PackageController
         }
 
         $this->repository->remove(current($package));
+
+        // warming up cache
+        $this->container->get('repository')->parseConfig($request);
 
         return $response->withStatus(200, 'Successfully reset.');
     }

@@ -13,6 +13,7 @@ use Alroniks\Repository\Domain\Repository\RepositoryFactory;
 use Alroniks\Repository\Helpers\GitHub;
 use Alroniks\Repository\Helpers\Originality;
 use Interop\Container\ContainerInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Request;
@@ -43,6 +44,17 @@ class ConfigReaderMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) : ResponseInterface
     {
+        $this->parseConfig($request);
+
+        return $next($request, $response);
+    }
+
+    /**
+     * Parses configuration file and loads repository's meta data into storage
+     * @param ServerRequestInterface $request
+     */
+    public function parseConfig(ServerRequestInterface $request) {
+
         /** @var Repositories $repositories */
         $repositories = new Repositories($this->persistence, new RepositoryFactory());
 
@@ -74,7 +86,7 @@ class ConfigReaderMiddleware
             if (!isset($repositoryConfig->categories)) {
                 continue;
             }
-            
+
             /** @var \stdClass $categoryConfig */
             foreach ($repositoryConfig->categories as $categoryConfig) {
 
@@ -136,10 +148,6 @@ class ConfigReaderMiddleware
             }
             $rank++;
         }
-
-        $response = $next($request, $response);
-
-        return $response;
     }
 
     private function fetchPackageMeta($url)
