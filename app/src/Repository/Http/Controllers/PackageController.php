@@ -179,6 +179,9 @@ class PackageController
 
         $this->repository->remove(current($package));
 
+        // hack - clear all cache
+        shell_exec(escapeshellcmd('redis-cli -n 1 flushall'));
+
         // warming up cache
         $this->container->get('repository')->parseConfig($request);
 
