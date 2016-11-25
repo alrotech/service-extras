@@ -15,7 +15,8 @@
         {
           "name": "Темы сайта",
           "packages": [
-            "https://github.com/Alroniks/mdv-theme"
+            "https://github.com/Alroniks/mdv-theme",
+            "https://github.com/Alroniks/theme-belbiz"
           ]
         }
       ]
