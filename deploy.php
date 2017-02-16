@@ -12,9 +12,9 @@ set('writable_dirs', []);
 
 
 server('production', 'api.aestore.by')
-    ->user('alroniks')
+    ->user('root')
     ->identityFile()
-    ->env('deploy_path', '/var/www/apiaestore')
+    ->env('deploy_path', '/var/www/apiaestoreby/www/')
     ->stage('production');
 
 task('php:restart', function () {
