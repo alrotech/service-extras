@@ -157,6 +157,10 @@ class PackageController
      */
     public function reset(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
+        sleep(10); // sleeps 10 seconds before starting processing request, 
+                   // because payload with package is not ready right after 
+                   // triggering the webhook
+         
         $token = $request->getAttribute('token');
 
         $tokenStorage = 'config/token.key';
