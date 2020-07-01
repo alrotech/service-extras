@@ -1,19 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
-declare(strict_types=1);
-
-chdir(dirname(__DIR__));
-
-require "vendor/autoload.php";
-session_start();
-
-$config['displayErrorDetails'] = true;
-
-$app = new \Slim\App(['settings' => $config]);
-
-require 'app/src/dependencies.php';
-require 'app/src/middleware.php';
-
-require 'app/src/routes.php';
-
-$app->run();
+try {
+    (require __DIR__ . '/../config/application.php')->run();
+} catch (Throwable $e) {
+    http_response_code($e->getCode());
+    echo $e->getMessage();
+}
