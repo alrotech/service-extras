@@ -14,7 +14,3 @@ so that _will give benefit_.
 ### Acceptance Criteria
 - The first criteria
 - The second criteria
-
-### Tasklist
-- [ ] Task description one #0
-- [ ] Task description two #0
