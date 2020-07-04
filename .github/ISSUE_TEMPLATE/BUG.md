@@ -1,6 +1,8 @@
 ---
 name: "Bug Report"
 about: 'Report issue if something works unexpected'
+title: 'Issue with something'
+labels: bug, important
 ---
 
 ### Description:
