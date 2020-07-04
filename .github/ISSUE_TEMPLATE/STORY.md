@@ -1,13 +1,20 @@
 ---
 name: "User Story"
-about: 'Story or epic that describes general goal from user perspective'
+about: 'User story that describes general goal from the user perspective'
 ---
 
+# Title
+<!-- Describe the goal shortly in the title -->
+
 ### Story
-As a [user], I [want to], [so that].
+As a **User**, 
+I want to **do something**, 
+so that _will give benefit_.
 
 ### Acceptance Criteria
+- The first criteria
+- The second criteria
 
-### Task list
-- [ ] #124 - Task description
-
+### Tasklist
+- [ ] Task description one #0
+- [ ] Task description two #0
