@@ -1,10 +1,9 @@
 ---
 name: "User Story"
 about: 'User story that describes general goal from the user perspective'
+title: Short goal or description of the user story
+labels: story, moderate
 ---
-
-# Title
-<!-- Describe the goal shortly in the title -->
 
 ### Story
 As a **User**, 
