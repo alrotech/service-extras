@@ -1,6 +1,9 @@
 ---
 name: 'Epic Issue'
-description: 'The goal, that should be achieved by implementing the tasklist'
+about: 'The goal, that should be achieved by implementing the tasklist'
+title: '[EPIC] Short epic goal'
+labels: epic
+assignees: Alroniks
 ---
 
 ### Goal
